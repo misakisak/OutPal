@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { auth } from '../firebase'
+import { useDispatch, useSelector } from 'react-redux';
 
-export default function HomeScreen({user1}) {  
-     console.log("Home: ", user1)
+export default function HomeScreen({route}) {  
+     const loggedInUser = firebase.auth().currentUser
+     const data = useSelector((state) => state.userdata)
+          .filter((farmer) => farmer.Username == route.params.userdata)[0];
      // const user = auth
-     // console.log(user)
+     console.log(loggedInUser)
+     console.log(data)
+
      return (
+
           <View>
                <Text style={styles.input}>Home: Logged in!!</Text>
           </View>
-  )
+     )
 }
 
 const styles = StyleSheet.create({

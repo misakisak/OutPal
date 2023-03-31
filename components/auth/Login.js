@@ -23,10 +23,10 @@ export default function LoginScreen({ navigation }) {
           .then(userCredentials => {
                const user = userCredentials.user;
                console.log('Registered with:', user.email);
-               setUser1(user)
+               setUser1(user.email)
           })
           .catch(error => alert(error.message))
-          navigation.navigate("Home", {user1})
+          navigation.navigate("Home", {userdata: user1})
      }
    
      const handleLogin = () => {
@@ -34,10 +34,10 @@ export default function LoginScreen({ navigation }) {
           .then(userCredentials => {
                const user = userCredentials.user;
                console.log('Logged in with:', user.email);
-               setUser1(user)
+               setUser1(user.email)
           })
           .catch(error => alert(error.message))
-          navigation.navigate("Home", {user1})
+          navigation.navigate("Home", {userdata: user1})
      }
   
      return (
