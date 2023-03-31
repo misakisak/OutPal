@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { auth } from '../firebase'
 import { useDispatch, useSelector } from 'react-redux';
+// import firebase from 'firebase';
+// require('firebase/firestore')
 
 export default function HomeScreen({route}) {  
-     const loggedInUser = firebase.auth().currentUser
+     // const loggedInUser = firebase.auth().currentUser
      const data = useSelector((state) => state.userdata)
-          .filter((farmer) => farmer.Username == route.params.userdata)[0];
+          .filter((userdata) => farmer.Username == route.params.userdata)[0];
      // const user = auth
-     console.log(loggedInUser)
+     // console.log(loggedInUser)
      console.log(data)
 
      return (
