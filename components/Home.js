@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { auth } from '../firebase'
 
-export default function HomeScreen({route}) {  
-     console.log(route)
-     const user = auth
-     console.log(user)
+export default function HomeScreen({user1}) {  
+     console.log("Home: ", user1)
+     // const user = auth
+     // console.log(user)
      return (
           <View>
-               <Text style={styles.input}>Home: Logged in!!{user}</Text>
+               <Text style={styles.input}>Home: Logged in!!</Text>
           </View>
   )
 }

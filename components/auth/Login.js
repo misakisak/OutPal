@@ -7,7 +7,7 @@ import { auth } from '../../firebase'
 export default function LoginScreen({ navigation }) {
      const [email, setEmail] = useState('')
      const [password, setPassword] = useState('')
-     const [userName, setUserName] = useState('')
+     const [user1, setUser1] = useState('')
     
      useEffect(() => {
        const unsubscribe = auth.onAuthStateChanged(user => {
@@ -23,10 +23,10 @@ export default function LoginScreen({ navigation }) {
           .then(userCredentials => {
                const user = userCredentials.user;
                console.log('Registered with:', user.email);
-               setUserName(user.email)
+               setUser1(user)
           })
           .catch(error => alert(error.message))
-          navigation.navigate("Home", {userName})
+          navigation.navigate("Home", {user1})
      }
    
      const handleLogin = () => {
@@ -34,10 +34,10 @@ export default function LoginScreen({ navigation }) {
           .then(userCredentials => {
                const user = userCredentials.user;
                console.log('Logged in with:', user.email);
-               setUserName(user.email)
+               setUser1(user)
           })
           .catch(error => alert(error.message))
-          navigation.navigate("Home", {userName})
+          navigation.navigate("Home", {user1})
      }
   
      return (
