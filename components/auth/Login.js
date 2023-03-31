@@ -1,41 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, StyleSheet, TextInput, Text, View, Button } from 'react-native';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 import { auth } from '../../firebase'
 
 export default function LoginScreen({ navigation }) {
      const [email, setEmail] = useState('')
      const [password, setPassword] = useState('')
-   
+     const [userName, setUserName] = useState('')
+    
      useEffect(() => {
        const unsubscribe = auth.onAuthStateChanged(user => {
          if (!user) {
           return;
          }
        })
-       navigation.navigate("Home")
        return unsubscribe
      }, [])
    
      const handleSignUp = () => {
-          auth
-          .createUserWithEmailAndPassword(email, password)
+          createUserWithEmailAndPassword(auth, email, password)
           .then(userCredentials => {
                const user = userCredentials.user;
                console.log('Registered with:', user.email);
+               setUserName(user.email)
           })
           .catch(error => alert(error.message))
+          navigation.navigate("Home", {userName})
      }
    
      const handleLogin = () => {
-          auth
-          .signInWithEmailAndPassword(email, password)
+          signInWithEmailAndPassword(auth, email, password)
           .then(userCredentials => {
                const user = userCredentials.user;
                console.log('Logged in with:', user.email);
+               setUserName(user.email)
           })
           .catch(error => alert(error.message))
+          navigation.navigate("Home", {userName})
      }
   
      return (
