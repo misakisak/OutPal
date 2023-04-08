@@ -3,6 +3,7 @@ import {View, Text} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider }  from 'react-redux';
+import store from "./redux/store";
 
 
 import LoginScreen from './components/auth/Login'
@@ -13,7 +14,7 @@ const Stack = createStackNavigator();
 export class App extends Component {
   render() {    
     return(
-      <Provider>
+      <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Login">
             <Stack.Screen 
@@ -27,7 +28,7 @@ export class App extends Component {
               }}
             /> 
             <Stack.Screen 
-              name="Home" 
+              name="Home"  
               component={HomeScreen} 
               navigation={this.props.navigation} 
               options={{

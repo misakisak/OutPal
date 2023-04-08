@@ -1,50 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, StyleSheet, TextInput, Text, View, Button } from 'react-native';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+// import rootReducer from './redux/reducers';
+// import thunk from 'redux-thunk';
+// import { applyMiddleware } from 'redux';
 
 import { auth } from '../../firebase'
 
 export default function LoginScreen({ navigation }) {
      const [email, setEmail] = useState('')
      const [password, setPassword] = useState('')
-     const [user1, setUser1] = useState('')
+     // const [user1, setUser1] = useState('')
+     // const user = userCredentials.user
+
+     const [users, setUsers] = useState({
+          // email: user.providerData[0].email,
+          // name: '',
+          email: '',
+          name: ''
+     });
     
      useEffect(() => {
-       const unsubscribe = auth.onAuthStateChanged(user => {
-         if (!user) {
-          return;
-         }
-       })
-       return unsubscribe
+          const unsubscribe = auth.onAuthStateChanged(user => {
+               if (!user) {
+                    return;
+               }
+               
+               const userName = user.providerData[0].displayName || '';
+               setUsers({
+                    ...users,
+                    email: user.email,
+               });
+               console.log("users!!!")
+               console.log(user.email)
+               console.log("users22!!!")
+               console.log(users)
+               navigation.navigate("Home", { user: users });
+          })
+          return unsubscribe
      }, [])
-   
+     // console.log(user.email)
+
      const handleSignUp = () => {
           createUserWithEmailAndPassword(auth, email, password)
           .then(userCredentials => {
-               const user = userCredentials.user;
-               console.log('Registered with:', user.email);
-               setUser1(user.email)
+               // const user = userCredentials.user;
+               // setUsers = userCredentials.user
+               setUsers({
+                    ...users,
+                    email: userCredentials.user.email,
+               });
+               // console.log('Registered with:', user.email);
+               console.log('Registered with:', users.name);
           })
           .catch(error => alert(error.message))
-          navigation.navigate("Home", {userdata: user1})
+          navigation.navigate("Home", {user: users})
      }
-   
+     
      const handleLogin = () => {
           signInWithEmailAndPassword(auth, email, password)
           .then(userCredentials => {
-               const user = userCredentials.user;
-               console.log('Logged in with:', user.email);
-               setUser1(user.email)
+               // const user = userCredentials.user;
+               // setUsers = userCredentials.user;
+               setUsers({
+                    ...users,
+                    email: userCredentials.user.email,
+               });
+               console.log("setUsers###")
+               console.log(users)
+               console.log('Logged in with:', users.email);
+               // setUser1(user.email)
           })
           .catch(error => alert(error.message))
-          navigation.navigate("Home", {userdata: user1})
+          navigation.navigate("Home", {user: users})
      }
-  
+
      return (
+          // <Provider store={store}>
           <KeyboardAvoidingView
                style={styles.container}
                behavior="padding"
           >
+               {/* <View style={{backgroundColor: "black", height: 1, width: "100%", margin: 10}}/> */}
                <View style={styles.inputSection}>
                     <TextInput
                          autoCapitalize='none'
@@ -78,6 +117,7 @@ export default function LoginScreen({ navigation }) {
                     />
                </View>
           </KeyboardAvoidingView>
+          // </Provider>
      );
 }
 
