@@ -9,7 +9,7 @@
  
 //  import  { Farmer } from '../types';
  
- // Defines the initial farmers.
+ // Defines the initial farmers. 
  const initialState = [];
  
  // A Slice represents all the farmer information we share and the methods we

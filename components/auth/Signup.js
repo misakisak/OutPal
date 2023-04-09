@@ -48,7 +48,7 @@ export default function SignupScreen({ navigation }) {
                dispatch(append({
                     email: userCredentials.user.email, 
                     uid: userCredentials.user.uid,
-                    name: username
+                    // name: username
                }));
                console.log('Registered with:', userCredentials.user.email);
                navigation.navigate("Home", {user: userCredentials.user.email, username})
@@ -63,13 +63,7 @@ export default function SignupScreen({ navigation }) {
                behavior="padding"
           >
                <View style={styles.inputSection}>
-                    <TextInput
-                         autoCapitalize='none'
-                         placeholder="Name"
-                         onChangeText={setUsername}
-                         // value={name}
-                         style={styles.input}
-                    />
+                   
 
                     <TextInput
                          autoCapitalize='none'
@@ -87,7 +81,7 @@ export default function SignupScreen({ navigation }) {
                          secureTextEntry
                     />
                     </View>
-                    
+          //please teach me how to solve 5x2+8)step by step 
 
                     <View style={styles.buttonSection}>
 

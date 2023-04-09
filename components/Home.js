@@ -4,19 +4,23 @@ import { auth } from '../firebase'
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../redux/userSlice';
 import { signOut, updateProfile } from 'firebase/auth';
+import { collection, getDocs, addDoc, doc } from "firebase/firestore";
+
+import { db } from '../firebase'
 
 export default function HomeScreen({route, navigation}) {  
   const user = auth.currentUser;
 
   const [usersusers, setUsersusers] = useState({
-    email: user.email,
-    name: route.params.username,
-    uid: user.uid
+    email: route.params.user,
+    name: '',
+    uid: '',
   });
 
   const dispatch = useDispatch();
 
   const stateUsers = useSelector((state) => state.user);
+
 
   useEffect( () => {
     if (!route.params.user) {
@@ -26,7 +30,8 @@ export default function HomeScreen({route, navigation}) {
       return;
     }
     const foundUser = stateUsers.filter(
-      ({email}) => email == route.params.user);
+      ({email}) => email == route.params.user
+    );
     if (foundUser.length > 0) {
       setUsersusers(foundUser[0]);
     }
@@ -34,7 +39,7 @@ export default function HomeScreen({route, navigation}) {
     //   ({Username}) => Username == foundFarmer.Username);
     // setComments(foundComments);
   // }, [stateFarmers, stateComments]);
-    console.log(foundUser)
+    // console.log(foundUser)
   }, [stateUsers]);
 
   const handleLogout = () => {
@@ -47,12 +52,31 @@ export default function HomeScreen({route, navigation}) {
     dispatch(
       update({
         email: usersusers.email,
-        user: user
+        name: usersusers.name,
+        // user: user
       })
     );
     console.log('???')
-    console.log(usersusers)
+    console.log(user)
   }
+// add to firebase firestore example from https://firebase.google.com/docs/firestore/quickstart?hl=ja#web-version-9_1 
+  // try {
+  //   const docRef = await addDoc(collection(db, "users"), {
+  //     first: "Alan",
+  //     middle: "Mathison",
+  //     last: "Turing",
+  //     born: 1912
+  //   });
+  
+  //   console.log("Document written with ID: ", docRef.id);
+  // } catch (e) {
+  //   console.error("Error adding document: ", e);
+  // }
+
+  const querySnapshot =  getDocs(collection(db, "users"));
+  querySnapshot.forEach((doc) => {
+    console.log(`${doc.id} => ${doc.data()}`);
+  });
 
   return (
     <View style={styles.container}>

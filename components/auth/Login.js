@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }) {
           //      console.log(user.email)
           //      console.log("usersusers22!!!")
           //      console.log(usersusers)
-               navigation.navigate("Home", { user: usersusers });
+               navigation.navigate("Home", { user: usersusers.email });
           })
           return unsubscribe
      }, [])
@@ -51,7 +51,7 @@ export default function LoginScreen({ navigation }) {
                     // name: username
                }));
 
-               console.log('Logged in with:', usersusers.email);
+               console.log('Logged in with:', userCredentials.user.email);
                navigation.navigate("Home", {user: userCredentials.user.email})
           })
           .catch(error => alert(error.message))
