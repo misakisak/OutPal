@@ -32,9 +32,9 @@ export const userSlice = createSlice({
      //   How do we update a single farmer's profile information so it shows up
      //   correctly in the farmer list screen?
           update: (state, content) => {
-               const { username, user } = content.payload;
+               const { email, user } = content.payload;
                for (var i =0; i < state.length; ++i) {
-                    if (state[i].Username == username) {
+                    if (state[i].email == email) {
                          state[i] = {
                          ...state[i],
                          ...user,

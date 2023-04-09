@@ -7,6 +7,7 @@ import store from "./redux/store";
 
 
 import LoginScreen from './components/auth/Login'
+import SignupScreen from './components/auth/Signup'
 import HomeScreen from './components/Home'
 
 const Stack = createStackNavigator();
@@ -36,7 +37,17 @@ export class App extends Component {
                 headerTintColor: "white",
                 headerTitleStyle: {fontWeight: 'bold'},
               }}
-            />            
+            />    
+            <Stack.Screen 
+              name="Signup" 
+              component={SignupScreen} 
+              navigation={this.props.navigation}
+              options={{
+                headerStyle: {backgroundColor: "#95E1D3"},
+                headerTintColor: "white",
+                headerTitleStyle: {fontWeight: 'bold'},
+              }}
+            />         
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

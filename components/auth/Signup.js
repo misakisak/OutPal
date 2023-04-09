@@ -5,18 +5,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
-
-// import rootReducer from './redux/reducers';
-// import thunk from 'redux-thunk';
-// import { applyMiddleware } from 'redux';
-
 import { auth } from '../../firebase'
-import SignupScreen from './Signup';
-// import SignupScreen from '../auth/Signup'
 
-export default function LoginScreen({ navigation }) {
+export default function SignupScreen({ navigation }) {
+     const [username, setUsername] = useState('')
      const [email, setEmail] = useState('')
      const [password, setPassword] = useState('')
+
      const dispatch = useDispatch();
 
      const [usersusers, setUsersusers] = useState({
@@ -29,46 +24,56 @@ export default function LoginScreen({ navigation }) {
                if (!user) {
                     return;
                }
+               
                setUsersusers({
                     ...usersusers,
                     email: user.email,
                });
-          // console.log("\\user.email//")
-          //      console.log(user.email)
-          //      console.log("usersusers22!!!")
-          //      console.log(usersusers)
+               // console.log("user.email!!!")
+               // console.log(user.email)
+               // console.log("usersusers22!!!")
+               // console.log(usersusers)
                navigation.navigate("Home", { user: usersusers });
           })
           return unsubscribe
      }, [])
 
-     const handleLogin = () => {
-          signInWithEmailAndPassword(auth, email, password)
+     const handleSignUp = () => {
+          createUserWithEmailAndPassword(auth, email, password)
           .then(userCredentials => {
+               // setUsersusers({
+               //      ...usersusers,
+               //      email: userCredentials.user.email,
+               // });
                dispatch(append({
                     email: userCredentials.user.email, 
                     uid: userCredentials.user.uid,
-                    // name: username
+                    name: username
                }));
-
-               console.log('Logged in with:', usersusers.email);
-               navigation.navigate("Home", {user: userCredentials.user.email})
+               console.log('Registered with:', userCredentials.user.email);
+               navigation.navigate("Home", {user: userCredentials.user.email, username})
           })
           .catch(error => alert(error.message))
           
      }
 
      return (
-          // <Provider store={store}>
           <KeyboardAvoidingView
                style={styles.container}
                behavior="padding"
           >
                <View style={styles.inputSection}>
-                   
                     <TextInput
                          autoCapitalize='none'
-                         placeholder="Email"
+                         placeholder="Name"
+                         onChangeText={setUsername}
+                         // value={name}
+                         style={styles.input}
+                    />
+
+                    <TextInput
+                         autoCapitalize='none'
+                         placeholder="Username"
                          onChangeText={setEmail}
                          value={email}
                          style={styles.input}
@@ -81,20 +86,22 @@ export default function LoginScreen({ navigation }) {
                          style={styles.input}
                          secureTextEntry
                     />
-               </View>
+                    </View>
+                    
 
-               <View style={styles.buttonSection}>
-                    <Button 
-                         onPress={handleLogin}
-                         style={styles.button}
-                         title="Login"
-                    />
+                    <View style={styles.buttonSection}>
 
                     <Button 
                          outline
-                         onPress={() => navigation.navigate("Signup")}
+                         onPress={handleSignUp}
                          style={styles.button}
-                         title="You haven't sign up yet?"
+                         title="Sign up"
+                    />
+
+                    <Button 
+                         onPress={() => navigation.navigate('Login')}
+                         style={styles.button}
+                         title="You have your account already?"
                     />
                </View>
           </KeyboardAvoidingView>
