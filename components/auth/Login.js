@@ -33,10 +33,6 @@ export default function LoginScreen({ navigation }) {
                     ...usersusers,
                     email: user.email,
                });
-          // console.log("\\user.email//")
-          //      console.log(user.email)
-          //      console.log("usersusers22!!!")
-          //      console.log(usersusers)
                navigation.navigate("Home", { user: usersusers.email });
           })
           return unsubscribe
@@ -48,11 +44,10 @@ export default function LoginScreen({ navigation }) {
                dispatch(append({
                     email: userCredentials.user.email, 
                     uid: userCredentials.user.uid,
-                    // name: username
                }));
 
                console.log('Logged in with:', userCredentials.user.email);
-               navigation.navigate("Home", {user: userCredentials.user.email})
+               navigation.navigate("Main", {user: userCredentials.user.email})
           })
           .catch(error => alert(error.message))
           

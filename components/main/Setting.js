@@ -1,36 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
-import { auth } from '../firebase'
+import { auth } from '../../firebase'
 import { useDispatch, useSelector } from 'react-redux';
-import { append, update } from '../redux/userSlice';
+import { append, update } from '../../redux/userSlice';
 import { signOut, updateProfile } from 'firebase/auth';
-import { collection, getDocs, addDoc, doc } from "firebase/firestore";
+import { collection, getDoc, setDoc, addDoc, doc, updateDoc } from "firebase/firestore";
 
-import { db } from '../firebase'
+import { db } from '../../firebase'
 
-export default function HomeScreen({route, navigation}) {  
+export default function SettingScreen({route, navigation}) {  
   const user = auth.currentUser;
+  console.log(user.email)
 
   const [usersusers, setUsersusers] = useState({
-    email: route.params.user,
+    email: user.email,
     name: '',
     uid: '',
+    bio: '',
   });
 
   const dispatch = useDispatch();
 
   const stateUsers = useSelector((state) => state.user);
-
+  getUser(usersusers.uid);
 
   useEffect( () => {
-    if (!route.params.user) {
+    if (!user.email) {
       return;
     }
     if (!stateUsers) {
       return;
     }
     const foundUser = stateUsers.filter(
-      ({email}) => email == route.params.user
+      ({email}) => email == user.email
     );
     if (foundUser.length > 0) {
       setUsersusers(foundUser[0]);
@@ -53,30 +55,39 @@ export default function HomeScreen({route, navigation}) {
       update({
         email: usersusers.email,
         name: usersusers.name,
+        bio: usersusers.bio,
         // user: user
       })
     );
+    addUser(usersusers.uid, usersusers.name, usersusers.bio)
     console.log('???')
-    console.log(user)
+    console.log(usersusers.name)
   }
-// add to firebase firestore example from https://firebase.google.com/docs/firestore/quickstart?hl=ja#web-version-9_1 
-  // try {
-  //   const docRef = await addDoc(collection(db, "users"), {
-  //     first: "Alan",
-  //     middle: "Mathison",
-  //     last: "Turing",
-  //     born: 1912
-  //   });
-  
-  //   console.log("Document written with ID: ", docRef.id);
-  // } catch (e) {
-  //   console.error("Error adding document: ", e);
-  // }
 
-  const querySnapshot =  getDocs(collection(db, "users"));
-  querySnapshot.forEach((doc) => {
-    console.log(`${doc.id} => ${doc.data()}`);
-  });
+  //get user information from cloudfirestore
+  async function getUser(uid) {
+    try {
+      const userRef = doc(collection(db, "users"), uid);
+      const userDoc = await getDoc(userRef);
+  
+      if (userDoc.exists()) {
+        console.log("User data:", userDoc.data());
+      } else {
+        console.log("No such document!");
+      }
+    } catch (e) {
+      console.error("Error getting user: ", e);
+    }
+  }
+  async function addUser(uid, name, bio) {
+    try {
+      const userRef = doc(collection(db, "users"), uid);
+      await updateDoc(userRef, { name: name, bio: bio });
+      console.log("User added successfully!");
+    } catch (e) {
+      console.error("Error adding user: ", e);
+    }
+}
 
   return (
     <View style={styles.container}>
@@ -108,6 +119,16 @@ export default function HomeScreen({route, navigation}) {
               })}
               style={styles.input}
               defaultValue={usersusers.name}
+            />
+            <Text>Bio: </Text>
+            <TextInput
+              multiline
+              placeholder="bio"
+              onChangeText={text => setUsersusers({
+                ...usersusers,
+                bio: text,
+              })}
+              style={styles.input}
             />
           </View>
         </View>
@@ -148,7 +169,7 @@ const styles = StyleSheet.create({
   },
   detailsContent: {
     paddingLeft: 4,
-    width: '50%',
+    width: '100%',
   },
   input: {
     backgroundColor: '#fff',

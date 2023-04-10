@@ -5,15 +5,15 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
-import { auth } from '../../firebase'
+import { auth } from '../../firebase';
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
+import { db } from '../../firebase';
 
 export default function SignupScreen({ navigation }) {
      const [username, setUsername] = useState('')
      const [email, setEmail] = useState('')
      const [password, setPassword] = useState('')
-
      const dispatch = useDispatch();
-
      const [usersusers, setUsersusers] = useState({
           email: '',
           name: ''
@@ -24,16 +24,11 @@ export default function SignupScreen({ navigation }) {
                if (!user) {
                     return;
                }
-               
                setUsersusers({
                     ...usersusers,
-                    email: user.email,
+                    email: user.user.email,
                });
-               // console.log("user.email!!!")
-               // console.log(user.email)
-               // console.log("usersusers22!!!")
-               // console.log(usersusers)
-               navigation.navigate("Home", { user: usersusers });
+               navigation.navigate("Main");
           })
           return unsubscribe
      }, [])
@@ -41,20 +36,28 @@ export default function SignupScreen({ navigation }) {
      const handleSignUp = () => {
           createUserWithEmailAndPassword(auth, email, password)
           .then(userCredentials => {
-               // setUsersusers({
-               //      ...usersusers,
-               //      email: userCredentials.user.email,
-               // });
                dispatch(append({
                     email: userCredentials.user.email, 
                     uid: userCredentials.user.uid,
                     // name: username
                }));
+               
+               addUser(userCredentials.user.uid, userCredentials.user.email)
                console.log('Registered with:', userCredentials.user.email);
-               navigation.navigate("Home", {user: userCredentials.user.email, username})
+               navigation.navigate("Main")
           })
           .catch(error => alert(error.message))
-          
+     }
+
+     //add user information to cloudfirestore with uid
+     async function addUser(uid, email) {
+          try {
+            const userRef = doc(collection(db, "users"), uid);
+            await setDoc(userRef, { email: email });
+            console.log("User added successfully!");
+          } catch (e) {
+            console.error("Error adding user: ", e);
+          }
      }
 
      return (
@@ -63,11 +66,9 @@ export default function SignupScreen({ navigation }) {
                behavior="padding"
           >
                <View style={styles.inputSection}>
-                   
-
                     <TextInput
                          autoCapitalize='none'
-                         placeholder="Username"
+                         placeholder="email"
                          onChangeText={setEmail}
                          value={email}
                          style={styles.input}
@@ -80,18 +81,15 @@ export default function SignupScreen({ navigation }) {
                          style={styles.input}
                          secureTextEntry
                     />
-                    </View>
-          //please teach me how to solve 5x2+8)step by step 
+               </View>
 
-                    <View style={styles.buttonSection}>
-
+               <View style={styles.buttonSection}>
                     <Button 
                          outline
                          onPress={handleSignUp}
                          style={styles.button}
                          title="Sign up"
                     />
-
                     <Button 
                          onPress={() => navigation.navigate('Login')}
                          style={styles.button}
