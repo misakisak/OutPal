@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, SafeAreaView, TextInput, FlatList, Alert, Scrol
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
+import { collection, getDoc, setDoc, addDoc, doc, updateDoc } from "firebase/firestore";
+import { db } from '../../firebase'
 
 
 export default function AIScreen() {
@@ -11,8 +13,10 @@ export default function AIScreen() {
   const [answer, setAnswer] = useState([
     { id: uuidv4(), who1: '', ask: '', text: 'Item 1', who2: 'AI'},
   ]);
+  const [api, setAPI] = useState('')  
 
   const handler = async () => {
+    getAPI()
     try {
       const response = await fetch(`https://api.openai.com/v1/completions`, {
         method: "POST",
@@ -25,8 +29,7 @@ export default function AIScreen() {
         headers: {
           "Content-Type": "application/json",
           Authorization:
-            // "Bearer YOUR_KEY_HERE",
-            "Bearer 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"
+            api
         },
       }).then((res) => res.json());
       const newAIDataItem = { id: uuidv4(), who1: 'user', ask: question,  who2: 'AI', text: response.choices[0].text };
@@ -36,6 +39,23 @@ export default function AIScreen() {
       console.error(e);
     }
   }; 
+
+  async function getAPI() {
+    try {
+      const userRef = doc(collection(db, "API"), "openAPI");
+      const userDoc = await getDoc(userRef);
+      // return userDoc.data()
+      if (userDoc.exists()) {
+        console.log("User data:", userDoc.data().api);
+        setAPI("Bearer " + userDoc.data().api)
+        console.log(api)
+      } else {
+        console.log("No such document!");
+      }
+    } catch (e) {
+      console.error("Error getting user: ", e);
+    }
+  }
 
   return (
     <SafeAreaView style={{flex:1}}>
