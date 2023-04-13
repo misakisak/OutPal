@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
-import { auth } from '../../firebase'
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
 import { signOut, updateProfile } from 'firebase/auth';
 import { collection, getDoc, setDoc, addDoc, doc, updateDoc } from "firebase/firestore";
-
-import { db } from '../../firebase'
+import { db, auth } from '../../firebase'
 
 export default function SettingScreen({route, navigation}) {  
   const user = auth.currentUser;
@@ -37,11 +35,7 @@ export default function SettingScreen({route, navigation}) {
     if (foundUser.length > 0) {
       setUsersusers(foundUser[0]);
     }
-    // const foundComments = stateComments.filter(
-    //   ({Username}) => Username == foundFarmer.Username);
-    // setComments(foundComments);
-  // }, [stateFarmers, stateComments]);
-    // console.log(foundUser)
+
   }, [stateUsers]);
 
   const handleLogout = () => {
@@ -56,12 +50,9 @@ export default function SettingScreen({route, navigation}) {
         email: usersusers.email,
         name: usersusers.name,
         bio: usersusers.bio,
-        // user: user
       })
     );
     addUser(usersusers.uid, usersusers.name, usersusers.bio)
-    console.log('???')
-    console.log(usersusers.name)
   }
 
   //get user information from cloudfirestore
@@ -97,16 +88,6 @@ export default function SettingScreen({route, navigation}) {
           <View style={styles.detailInput}>
             <Text>Name: {usersusers.name} </Text>
             <Text>Email: {usersusers.email} </Text>
-            {/* <TextInput
-              autoCapitalize='none'
-              placeholder="new username"
-              onChangeText={text => setFarmer({
-                ...farmer,
-                Username: text,
-              })}
-              style={styles.input}
-              defaultValue={farmer.Username}
-            /> */}
           </View>
 
           <View style={styles.detailInput}>
@@ -129,6 +110,7 @@ export default function SettingScreen({route, navigation}) {
                 bio: text,
               })}
               style={styles.input}
+              defaultValue={usersusers.bio}
             />
           </View>
         </View>

@@ -1,6 +1,4 @@
-// import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView, TextInput, FlatList, Alert, ScrollView, VirtualizedList} from 'react-native';
-// import { OpenAI } from "./node_modules/langchain/llms";
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
@@ -44,11 +42,9 @@ export default function AIScreen() {
     try {
       const userRef = doc(collection(db, "API"), "openAPI");
       const userDoc = await getDoc(userRef);
-      // return userDoc.data()
       if (userDoc.exists()) {
-        console.log("User data:", userDoc.data().api);
         setAPI("Bearer " + userDoc.data().api)
-        console.log(api)
+        // console.log(api)
       } else {
         console.log("No such document!");
       }

@@ -5,14 +5,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
-
-// import rootReducer from './redux/reducers';
-// import thunk from 'redux-thunk';
-// import { applyMiddleware } from 'redux';
-
 import { auth } from '../../firebase'
-import SignupScreen from './Signup';
-// import SignupScreen from '../auth/Signup'
 
 export default function LoginScreen({ navigation }) {
      const [email, setEmail] = useState('')
@@ -33,7 +26,7 @@ export default function LoginScreen({ navigation }) {
                     ...usersusers,
                     email: user.email,
                });
-               navigation.navigate("Home", { user: usersusers.email });
+               navigation.navigate("Main", { user: usersusers.email });
           })
           return unsubscribe
      }, [])

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, StyleSheet, TextInput, Text, View, Button } from 'react-native';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { configureStore } from '@reduxjs/toolkit';
-import { Provider } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
 import { auth } from '../../firebase';
@@ -10,7 +8,7 @@ import { collection, getDocs, setDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase';
 
 export default function SignupScreen({ navigation }) {
-     const [username, setUsername] = useState('')
+     const [name, setName] = useState('')
      const [email, setEmail] = useState('')
      const [password, setPassword] = useState('')
      const dispatch = useDispatch();
@@ -39,26 +37,33 @@ export default function SignupScreen({ navigation }) {
                dispatch(append({
                     email: userCredentials.user.email, 
                     uid: userCredentials.user.uid,
-                    // name: username
+                    name: name
                }));
-               
-               addUser(userCredentials.user.uid, userCredentials.user.email)
+               //add user information to cloudfirestore with uid
+
+               try {
+                    const userRef = doc(collection(db, "users"), userCredentials.user.uid);
+                    setDoc(userRef, { email: userCredentials.user.email, name: name });
+                    console.log("User added successfully!");
+               } catch (e) {
+                    console.error("Error adding user: ", e);
+               }
                console.log('Registered with:', userCredentials.user.email);
-               navigation.navigate("Main")
+               navigation.navigate("Setting")
           })
           .catch(error => alert(error.message))
      }
 
      //add user information to cloudfirestore with uid
-     async function addUser(uid, email) {
-          try {
-            const userRef = doc(collection(db, "users"), uid);
-            await setDoc(userRef, { email: email });
-            console.log("User added successfully!");
-          } catch (e) {
-            console.error("Error adding user: ", e);
-          }
-     }
+     // async function addUser(uid, email) {
+     //      try {
+     //        const userRef = doc(collection(db, "users"), uid);
+     //        await setDoc(userRef, { email: email, name: name });
+     //        console.log("User added successfully!");
+     //      } catch (e) {
+     //        console.error("Error adding user: ", e);
+     //      }
+     // }
 
      return (
           <KeyboardAvoidingView
@@ -66,6 +71,13 @@ export default function SignupScreen({ navigation }) {
                behavior="padding"
           >
                <View style={styles.inputSection}>
+                    <TextInput
+                         autoCapitalize='none'
+                         placeholder="name"
+                         onChangeText={setName}
+                         value={name}
+                         style={styles.input}
+                    />
                     <TextInput
                          autoCapitalize='none'
                          placeholder="email"

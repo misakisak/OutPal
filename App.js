@@ -4,19 +4,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider }  from 'react-redux';
 import store from "./redux/store";
-
-
 import LoginScreen from './components/auth/Login'
 import SignupScreen from './components/auth/Signup'
-import HomeScreen from './components/main/Home'
 import Main from './components/Main'
 import liveScreen from './components/main/Live';
 import SettingScreen from './components/main/Setting';
-import auth from './firebase'
 import AIScreen from './components/main/AI';
 import ProfileScreen from './components/main/Profile';
-// import onAuthStateChanged from "firebase/auth"
-
+import NewQuestionScreen from './components/main/NewQuestion';
 
 const Stack = createStackNavigator();
 
@@ -101,6 +96,16 @@ export class App extends Component {
             <Stack.Screen 
               name="Profile" 
               component={ProfileScreen}
+              navigation={this.props.navigation}
+              options={{
+                headerStyle: {backgroundColor: "#95E1D3"},
+                headerTintColor: "white",
+                headerTitleStyle: {fontWeight: 'bold'}
+              }}
+            />
+            <Stack.Screen 
+              name="NewQuestion" 
+              component={NewQuestionScreen}
               navigation={this.props.navigation}
               options={{
                 headerStyle: {backgroundColor: "#95E1D3"},

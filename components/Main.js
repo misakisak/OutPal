@@ -2,14 +2,9 @@
 
 import React, { Component } from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-
-import { connect } from 'react-redux';
-
 import HomeScreen from './main/Home';
 import newLiveScreen from './main/NewLive';
-import profileScreen from './main/Setting';
 import QuestionScreen from './main/Question';
 
 const Tab = createMaterialBottomTabNavigator();

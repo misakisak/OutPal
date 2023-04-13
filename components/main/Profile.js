@@ -2,59 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
-// import { Camera } from 'expo-camera';
-// import * as ImagePicker from 'expo-image-picker';
-import { NavigationContainer } from '@react-navigation/native';
-import liveScreen from '../main/Live'
 
 export default function ProfileScreen({navigation}) {
     return (
         <View style={[{ flex: 1 }]}>
             <Text style={{margin:30}}>Profile</Text>
-            {/* <View style={styles.cameraContainer}>
-                <Camera
-                    ref={ref => setCamera(ref)} 
-                    style={styles.fixedRatio}
-                    type={type}
-                    ratio={'1:1'}
-                />
-            </View> */}
-
             <View style={styles.buttonContainer}>
-                {/* <TouchableOpacity
-                    onPress={() => {
-                    setType(
-                        type === Camera.Constants.Type.back
-                        ? Camera.Constants.Type.front
-                        : Camera.Constrants.Type.back
-                    );}}
-                    style={styles.button1}
-                >
-                    <Text style={styles.text}>Flip Image</Text>
-                </TouchableOpacity> */}
-                {/* <TouchableOpacity
-                    onPress={() => takePicture()}
-                    style={styles.button}
-                >
-                    <Text style={styles.text}>Take Picture</Text>
-                </TouchableOpacity> */}
-            </View>
-            <View style={styles.buttonContainer}>
-                {/* <TouchableOpacity
-                    onPress={() => pickImage()}
-                    style={styles.button1}
-                >
-                    <Text style={styles.text}>Pick Image From Gallery</Text>
-                </TouchableOpacity> */}
                 <TouchableOpacity
                     onPress={() => navigation.navigate("Setting")}
                     style={styles.button}
                 >
                     <Text style={styles.text}>Go setting</Text>
                 </TouchableOpacity>
-            </View>
-            <View style={styles.container}>
-            {/* {image && <Image source={{uri: image}} style={styles.image}/>} */}
             </View>
         </View>
     );
