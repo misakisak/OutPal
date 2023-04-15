@@ -3,21 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
 
-export default function NewLive({navigation}) {
+export default function SearchScreen({navigation}) {
     return (
-        <View style={[{ flex: 1, backgroundColor: "white"}]}>
-            <Text style={{margin:30}}>NewLive</Text>
+        <View style={[{ flex: 1, backgroundColor: "white" }]}>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate("Live")}
+                {/* <TouchableOpacity
+                    onPress={() => navigation.navigate("Setting")}
                     style={styles.button}
                 >
-                    <Text style={styles.text}>Go Live</Text>
-                </TouchableOpacity>
+                    <Text style={styles.text}>Go setting</Text>
+                </TouchableOpacity> */}
             </View>
-            {/* <View style={styles.container}>
-            {image && <Image source={{uri: image}} style={styles.image}/>}
-            </View> */}
         </View>
     );
 }

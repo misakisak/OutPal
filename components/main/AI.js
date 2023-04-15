@@ -9,9 +9,11 @@ import { db } from '../../firebase'
 export default function AIScreen() {
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState([
-    { id: uuidv4(), who1: '', ask: '', text: 'Item 1', who2: 'AI'},
+    { id: uuidv4(), who1: '', ask: '', text: 'Item 1', who2: 'AI', time: Date()},
   ]);
   const [api, setAPI] = useState('')  
+  const sortedData = answer.sort((a, b) => new Date(a.time) - new Date(b.time)).reverse();
+
 
   const handler = async () => {
     getAPI()
@@ -30,7 +32,7 @@ export default function AIScreen() {
             api
         },
       }).then((res) => res.json());
-      const newAIDataItem = { id: uuidv4(), who1: 'user', ask: question,  who2: 'AI', text: response.choices[0].text };
+      const newAIDataItem = { id: uuidv4(), who1: 'user', ask: question,  who2: 'AI', text: response.choices[0].text, time: Date() };
       setAnswer([...answer, newAIDataItem]);
       setQuestion("");
     } catch (e) {
@@ -54,7 +56,7 @@ export default function AIScreen() {
   }
 
   return (
-    <SafeAreaView style={{flex:1}}>
+    <SafeAreaView style={{flex:1, backgroundColor: "white"}}>
       <View style={{flex: 4}}>
         <VirtualizedList
           data={answer}
@@ -63,10 +65,10 @@ export default function AIScreen() {
           keyExtractor={(item) => item.id}
           renderItem={({item}) => (
             <View>
-              <Text style={{color: 'blue', padding: 5, fontSize: 15}}>{item.who1}</Text>
-              <Text style={{padding: 5, fontFamily: 'Menlo'}}>{item.ask}</Text>
               <Text style={{color: 'blue', padding: 5, fontSize: 15}}>{item.who2}</Text>
               <Text style={{padding: 5, fontFamily: 'Menlo'}}>{item.text}</Text>
+              <Text style={{color: 'blue', padding: 5, fontSize: 15}}>{item.who1}</Text>
+              <Text style={{padding: 5, fontFamily: 'Menlo'}}>{item.ask}</Text>
             </View>
           )}
         />

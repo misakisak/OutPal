@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
 import { signOut, updateProfile } from 'firebase/auth';
 import { collection, getDoc, setDoc, addDoc, doc, updateDoc } from "firebase/firestore";
 import { db, auth } from '../../firebase'
+// import ImagePicker from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
+import {  getStorage, ref, uploadBytes } from 'firebase/storage';
+import firebase from 'firebase/app'
+import 'firebase/storage';
 
+
+// import firebase from 'firebase'
 export default function SettingScreen({route, navigation}) {  
   const user = auth.currentUser;
   console.log(user.email)
+  const [imageUri, setImageUri] = useState(null);
 
   const [usersusers, setUsersusers] = useState({
     email: user.email,
@@ -70,6 +78,7 @@ export default function SettingScreen({route, navigation}) {
       console.error("Error getting user: ", e);
     }
   }
+
   async function addUser(uid, name, bio) {
     try {
       const userRef = doc(collection(db, "users"), uid);
@@ -78,7 +87,51 @@ export default function SettingScreen({route, navigation}) {
     } catch (e) {
       console.error("Error adding user: ", e);
     }
-}
+  }
+
+
+  // const handleButtonPress = async() => {
+  //   const result =  await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //   });
+
+  //   // if (!result.cancelled) {
+  //     setImageUri(result.uri);
+  //     console.log(result.uri)
+
+  //     // Upload the image to Firebase Storage
+  //     const response =  await fetch(result.uri);
+  //     const blob =  await response.blob();
+  //     const fileName = result.uri.split('/').pop();
+  //     const storageRef = ref(getStorage(), `images/${fileName}`);
+  //     const uploadTask = uploadBytes(storageRef, blob);
+  //   // }
+  // }
+  
+  const handleButtonPress = async() => {
+    const result =  await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    });
+    setImageUri(result.uri)
+    console.log(imageUri)
+    const { uri } = result.uri;
+    const storageRef = firebase.storage().ref();
+    const imageRef = storageRef.child('images/image.jpg');
+
+    fetch(uri)
+    .then(response => response.blob())
+    .then(blob => {
+      imageRef.putString(blob, 'data_url')
+        .then(snapshot => {
+          console.log('Uploaded a base64 string!');
+          imageRef.getDownloadURL()
+            .then(url => {
+              console.log('Got download URL:', url);
+            });
+        });
+    });
+  } 
+
 
   return (
     <View style={styles.container}>
@@ -127,6 +180,8 @@ export default function SettingScreen({route, navigation}) {
           title="Logout"
         />
       </View>
+      <Button title="Pick Image" onPress={handleButtonPress}/>
+      {imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200 }} />}
     </View>
   )
 }
@@ -138,6 +193,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     padding: 4,
+    backgroundColor: "white"
   },
   detailsContainer: {
     width: '100%',

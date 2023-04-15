@@ -16,7 +16,14 @@ export class Main extends Component {
                <Tab.Navigator 
                     initialRouteName="Home" 
                     labeled={false}
-                    barStyle={{ backgroundColor: "#95E1D3" }}
+                    barStyle={{ backgroundColor: "white", borderWidth: 1, borderColor: 'lightgray', height: "12%"}}
+                    tabBarOptions={{
+                         style: {
+                              // borderWidth: 1,
+                              // borderTopColor: 'black',
+                              borderWidth: 1, borderColor: 'lightgray'
+                         }
+                    }}
                >
                     <Tab.Screen name="Home" component={HomeScreen} navigation={this.props.navigation}
                          options={{

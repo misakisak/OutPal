@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-// import { append, update } from '../../redux/userSlice';
-// import { signOut, updateProfile } from 'firebase/auth';
+import { append, update } from '../../redux/userSlice';
+import { signOut, updateProfile } from 'firebase/auth';
 import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase'
 import DropDownPicker from "react-native-dropdown-picker";
@@ -33,6 +33,7 @@ export default function NewQuestionScreen({route, navigation}) {
      const dispatch = useDispatch();
 
      const stateUsers = useSelector((state) => state.user);
+     
 
      useEffect( () => {
           if (!user.email) {
@@ -46,22 +47,36 @@ export default function NewQuestionScreen({route, navigation}) {
           );
           if (foundUser.length > 0) {
                setUsersusers(foundUser[0]);
-               setQuestions({...questions, name: foundUser[0].name});
-               // console.log(usersusers)
+               setQuestions({...questions, name: stateUsers[0].name});
+               setTagTag()
+               // console.log(questions.uid)
           }
           readCollection()
      }, [stateUsers]);
 
+     useEffect( () => {
+          // if (!user.email) {
+          //      return;
+          // }
+          // if (!stateUsers) {
+          //      return;
+          // }
+          const foundUser = stateUsers.filter(
+               ({email}) => email == user.email
+          );
+          if (foundUser.length > 0) {
+               // setUsersusers(foundUser[0]);
+               // setQuestions({...questions, name: stateUsers[0].name});
+               setTagTag()
+               // console.log(questions.uid)
+          }
+     }, [value]);
+     
 
-     const uploadQuestion = async() => {
-          // const userRef = doc(collection(db, "users"), questions.uid);
-          // const userDoc = await getDoc(userRef);
-          // console.log(userDoc)
+
+     const setTagTag = async() => {
           const result = items.find((item) => item.value === value);
           setQuestions({...questions, tag: result.label});
-          // console.log(result.label)
-          // console.log(usersusers.name)
-          sendQuestion(questions)
      }
 
   //get tag information from cloudfirestore
@@ -83,8 +98,8 @@ export default function NewQuestionScreen({route, navigation}) {
                const userRef = doc(collection(db, "Q's", value, "question"))
                // const userRef = doc(collection(db, ("question", "Q's")), value)
                // await setDoc(doc(db, "Q's", value, "question"), data);
-               await setDoc(userRef, { uid: questions.uid, name: questions.name, question: questions.question, time: questions.time, tag: questions.tag });
-               console.log(questions.tag)
+               await setDoc(userRef, { uid: questions?.uid || "", name: questions.name, question: questions.question, time: questions.time, tag: questions.tag });
+               // console.log(questions.tag)
                console.log("User added successfully!");
           } catch (e) {
                console.error("Error adding user: ", e);
@@ -101,7 +116,7 @@ export default function NewQuestionScreen({route, navigation}) {
                          setOpen={setOpen}
                          setValue={setValue}
                          setItems={setItems}
-                         style={{flex: 1}}
+                         style={{margin:5, width: "95%"}}
                     />
                </View>
                {/* <View style={{flex:5}}> */}
@@ -111,7 +126,7 @@ export default function NewQuestionScreen({route, navigation}) {
                          onChangeText={(text) => setQuestions({...questions, question: text})}
                          style={{ flex: 3, width: "80%", borderRadius: 10, marginBottom: 5, borderWidth: 1, borderColor: 'lightgray'}}
                     />
-                    <TouchableOpacity onPress={uploadQuestion} style={styles.button}> 
+                    <TouchableOpacity onPress={sendQuestion} style={styles.button}> 
                          <Text style={styles.buttonText}>send</Text>
                     </TouchableOpacity>      
                {/* </View> */}
@@ -126,6 +141,7 @@ const styles = StyleSheet.create({
           alignItems: 'center',
           justifyContent: 'flex-start',
           padding: 4,
+          backgroundColor: "white"
      },
      detailsContainer: {
           width: '100%',

@@ -12,6 +12,8 @@ import SettingScreen from './components/main/Setting';
 import AIScreen from './components/main/AI';
 import ProfileScreen from './components/main/Profile';
 import NewQuestionScreen from './components/main/NewQuestion';
+import QCommentScreen from './components/main/QComment';
+import SearchScreen from './components/main/Search';
 
 const Stack = createStackNavigator();
 
@@ -93,9 +95,30 @@ export class App extends Component {
                 headerTitleStyle: {fontWeight: 'bold'}
               }}
             />
+            {/* <Stack.Screen 
+              name="Profile" 
+              component={ProfileScreen}
+              navigation={this.props.navigation}
+              options={{
+                headerStyle: {backgroundColor: "white", borderWidth: 1, borderColor: "gray"},
+                headerTintColor: "black",
+                headerTitleStyle: {fontWeight: 'bold'}
+              }}
+            /> */}
             <Stack.Screen 
               name="Profile" 
               component={ProfileScreen}
+              navigation={this.props.navigation}
+              options={{
+                headerStyle: {backgroundColor: "white", borderWidth: 1, borderColor: "gray",},
+                headerTintColor: "black",
+                headerTitleStyle: {fontWeight: 'bold'},
+                // header: props => <MyHeaderComponent {...props}/>
+              }}
+            />
+            <Stack.Screen 
+              name="NewQuestion" 
+              component={NewQuestionScreen}
               navigation={this.props.navigation}
               options={{
                 headerStyle: {backgroundColor: "#95E1D3"},
@@ -104,8 +127,18 @@ export class App extends Component {
               }}
             />
             <Stack.Screen 
-              name="NewQuestion" 
-              component={NewQuestionScreen}
+              name="QComment" 
+              component={QCommentScreen}
+              navigation={this.props.navigation}
+              options={{
+                headerStyle: {backgroundColor: "#95E1D3"},
+                headerTintColor: "white",
+                headerTitleStyle: {fontWeight: 'bold'}
+              }}
+            />
+            <Stack.Screen 
+              name="Search" 
+              component={SearchScreen}
               navigation={this.props.navigation}
               options={{
                 headerStyle: {backgroundColor: "#95E1D3"},

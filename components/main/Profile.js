@@ -5,8 +5,7 @@ import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-n
 
 export default function ProfileScreen({navigation}) {
     return (
-        <View style={[{ flex: 1 }]}>
-            <Text style={{margin:30}}>Profile</Text>
+        <View style={[{ flex: 1, backgroundColor: "white" }]}>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     onPress={() => navigation.navigate("Setting")}
