@@ -7,9 +7,10 @@ import { collection, getDoc, setDoc, addDoc, doc, updateDoc } from "firebase/fir
 import { db, auth } from '../../firebase'
 // import ImagePicker from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
-import {  getStorage, ref, uploadBytes } from 'firebase/storage';
+// import {   ref, uploadBytes } from 'firebase/storage';
 import firebase from 'firebase/app'
-import 'firebase/storage';
+import { storage } from "../../firebase";
+import {  ref } from "firebase/storage";
 
 
 // import firebase from 'firebase'
@@ -28,7 +29,6 @@ export default function SettingScreen({route, navigation}) {
   const dispatch = useDispatch();
 
   const stateUsers = useSelector((state) => state.user);
-  getUser(usersusers.uid);
 
   useEffect( () => {
     if (!user.email) {
@@ -42,6 +42,7 @@ export default function SettingScreen({route, navigation}) {
     );
     if (foundUser.length > 0) {
       setUsersusers(foundUser[0]);
+      getUser(usersusers.uid);
     }
 
   }, [stateUsers]);
@@ -60,16 +61,18 @@ export default function SettingScreen({route, navigation}) {
         bio: usersusers.bio,
       })
     );
-    addUser(usersusers.uid, usersusers.name, usersusers.bio)
+    console.log(usersusers.name)
+    // console.log
+    updateUser(usersusers.uid, usersusers.name, usersusers.bio)
   }
 
   //get user information from cloudfirestore
   async function getUser(uid) {
     try {
       const userRef = doc(collection(db, "users"), uid);
-      const userDoc = await getDoc(userRef);
-  
+      const userDoc = await getDoc(userRef);  
       if (userDoc.exists()) {
+        setUsersusers({...usersusers, name: userDoc.data().name, bio: userDoc.data().bio})
         console.log("User data:", userDoc.data());
       } else {
         console.log("No such document!");
@@ -79,7 +82,7 @@ export default function SettingScreen({route, navigation}) {
     }
   }
 
-  async function addUser(uid, name, bio) {
+  async function updateUser(uid, name, bio) {
     try {
       const userRef = doc(collection(db, "users"), uid);
       await updateDoc(userRef, { name: name, bio: bio });
@@ -112,24 +115,19 @@ export default function SettingScreen({route, navigation}) {
     const result =  await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
-    setImageUri(result.uri)
+    setImageUri(result.assets[0].uri)
     console.log(imageUri)
-    const { uri } = result.uri;
-    const storageRef = firebase.storage().ref();
-    const imageRef = storageRef.child('images/image.jpg');
-
-    fetch(uri)
-    .then(response => response.blob())
-    .then(blob => {
-      imageRef.putString(blob, 'data_url')
-        .then(snapshot => {
-          console.log('Uploaded a base64 string!');
-          imageRef.getDownloadURL()
-            .then(url => {
-              console.log('Got download URL:', url);
-            });
-        });
+    const { uri } = result.assets[0].uri;
+    // const storageRef = storage.ref();
+    // const imageRef = storageRef.child('images/image.jpg');
+    const storageRef = ref(storage, "path/to/image.jpg")
+    const file = new File([""], uri);
+    const uploadTask = putFile(storageRef, file)
+    uploadTask.then((snapshot) => {
+      console.log("Uploaded a blob or file!");
+      const downloadURL = getDownloadURL(storageRef);
     });
+
   } 
 
 

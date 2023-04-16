@@ -5,7 +5,9 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
-import { auth } from '../../firebase'
+// import { auth } from '../../firebase'
+import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+import { db, auth } from '../../firebase'
 
 export default function LoginScreen({ navigation }) {
      const [email, setEmail] = useState('')
@@ -14,7 +16,7 @@ export default function LoginScreen({ navigation }) {
 
      const [usersusers, setUsersusers] = useState({
           email: '',
-          name: ''
+          uid: ''
      });
     
      useEffect(() => {
@@ -31,18 +33,48 @@ export default function LoginScreen({ navigation }) {
           return unsubscribe
      }, [])
 
+     function getName(uid) {
+          // const userRef = doc(collection(db, "users"), uid);
+          // const stateUsers = useSelector((state) => state.user)[1];
+          const qCollection = (collection(db, "users"), usersusers.uid);
+          const qSnapshot =  getDocs(qCollection);
+          const idArray = qSnapshot.docs.map((doc) => doc.id);
+          const dataArray = qSnapshot.docs.map((doc) => doc.data());
+          // const newItems = items.slice(); // Create a copy of the existing items array
+          // const newItems = [];
+      
+          // const Collection = collection(db, "Q's", value, "question");
+          // const Snapshot =  getDocs(Collection);
+          // const IDArray = Snapshot.docs.map((doc) => doc.id);
+      
+          // for (let i = 0; i < idArray.length; i++) {
+          //   newItems.push({ question: dataArray[i]?.question || "", uid: dataArray[i].uid, name: dataArray[i].name, time: dataArray[i].time, tag: dataArray[i].tag, TagID: value, QID: IDArray[i] });
+          // }
+          // setQuestionslist(newItems);
+          console.log('dataArray')
+          console.log(dataArray)
+     }
+
      const handleLogin = () => {
           signInWithEmailAndPassword(auth, email, password)
           .then(userCredentials => {
+               // getName(userCredentials.user.uid)
                dispatch(append({
                     email: userCredentials.user.email, 
                     uid: userCredentials.user.uid,
                }));
+               // getName(userCredentials.user.uid)
+               // const newItems = { uid: dataArray[i].comment, name: dataArray[i].name, time: dataArray[i].time}
+               // setUsersusers({...usersusers, uid:userCredentials.user.uid })
 
-               console.log('Logged in with:', userCredentials.user.email);
+               console.log('Logged in with:', usersusers);
                navigation.navigate("Main", {user: userCredentials.user.email})
           })
-          .catch(error => alert(error.message))
+
+          // .then(
+          //      getName()
+          // )
+          .catch(error => console.log(error.message))
           
      }
 

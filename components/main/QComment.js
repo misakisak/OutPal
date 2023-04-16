@@ -10,7 +10,7 @@ export default function QCommentScreen({navigation, route}) {
      const Q = route.params.question
      // console.log("route.params.question")
      // console.log(route.params.question)
-     const stateUsers = useSelector((state) => state.user);
+     const stateUsers = useSelector((state) => state.user)[1];
 
      const [text, setText] = useState("")
      // console.log(text)
@@ -22,8 +22,8 @@ export default function QCommentScreen({navigation, route}) {
      const [listComment, setListComment] = useState(
 
      )
-     // console.log("stateusers")
-     // console.log(stateUsers)
+     console.log("stateusers")
+     console.log(stateUsers)
 
 //     listComment.sort((a, b) => new Date(a.time) - new Date(b.time)).reverse();
      useEffect( () => {
@@ -35,7 +35,7 @@ export default function QCommentScreen({navigation, route}) {
                const userRef = doc(collection(db, "Q's", Q.TagID, "question", Q.QID, "qcomments"))
                // const userRef = doc(collection(db, ("question", "Q's")), value)
                // await setDoc(doc(db, "Q's", value, "question"), data);
-                setDoc(userRef, { comment: text, uid: Q.uid, time: Date(), name:stateUsers[0].name });
+                setDoc(userRef, { comment: text, uid: Q.uid, time: Date(), name:stateUsers[1].name });
                // console.log(questions.tag)
                console.log("Comment added successfully!");
                setList();

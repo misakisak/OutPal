@@ -16,6 +16,9 @@ export default function NewQuestionScreen({route, navigation}) {
           uid: '',
      });
 
+     const [text, setText] = useState("")
+     // console.log(text)
+
      const [questions, setQuestions] = useState({
           question: '',
           uid: user.uid,
@@ -47,9 +50,12 @@ export default function NewQuestionScreen({route, navigation}) {
           );
           if (foundUser.length > 0) {
                setUsersusers(foundUser[0]);
-               setQuestions({...questions, name: stateUsers[0].name});
+               setQuestions({...questions, name: stateUsers[1].name});
                setTagTag()
-               // console.log(questions.uid)
+               console.log("usersusers")
+               console.log(questions)
+               console.log("---")
+               console.log(stateUsers)
           }
           readCollection()
      }, [stateUsers]);
@@ -64,19 +70,22 @@ export default function NewQuestionScreen({route, navigation}) {
           const foundUser = stateUsers.filter(
                ({email}) => email == user.email
           );
-          if (foundUser.length > 0) {
+          // if (foundUser.length > 0) {
                // setUsersusers(foundUser[0]);
                // setQuestions({...questions, name: stateUsers[0].name});
                setTagTag()
                // console.log(questions.uid)
-          }
+          // }
      }, [value]);
      
 
 
      const setTagTag = async() => {
+          setQuestions("")
           const result = items.find((item) => item.value === value);
-          setQuestions({...questions, tag: result.label});
+          // result.label
+          // setQuestions({...questions, tag: result.label});
+          return(result.tag)
      }
 
   //get tag information from cloudfirestore
@@ -93,13 +102,13 @@ export default function NewQuestionScreen({route, navigation}) {
           // console.log(items)
      };
 
-     async function sendQuestion(questions) {
+     async function sendQuestion() {
           try {
-               const userRef = doc(collection(db, "Q's", value, "question"))
-               // const userRef = doc(collection(db, ("question", "Q's")), value)
-               // await setDoc(doc(db, "Q's", value, "question"), data);
-               await setDoc(userRef, { uid: questions?.uid || "", name: questions.name, question: questions.question, time: questions.time, tag: questions.tag });
-               // console.log(questions.tag)
+               // const userRef = doc(collection(db, "Q's", value, "question"))
+               // console.log(questions)
+               // await setDoc(userRef, { uid: questions.uid || "", name: questions.name, question: questions.question, time: questions.time, tag: questions.tag });
+               setQuestions({...questions, question: text, tag:setTagTag()});
+               console.log('A' + questions)
                console.log("User added successfully!");
           } catch (e) {
                console.error("Error adding user: ", e);
@@ -123,7 +132,7 @@ export default function NewQuestionScreen({route, navigation}) {
                     <TextInput
                          multiline
                          placeholder="Ask question..."
-                         onChangeText={(text) => setQuestions({...questions, question: text})}
+                         onChangeText={(text) => setText(text)}
                          style={{ flex: 3, width: "80%", borderRadius: 10, marginBottom: 5, borderWidth: 1, borderColor: 'lightgray'}}
                     />
                     <TouchableOpacity onPress={sendQuestion} style={styles.button}> 

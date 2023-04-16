@@ -115,7 +115,7 @@ export default function QuestionScreen({navigation}) {
           <FlatList
             data={questionslist}
             renderItem={({item}) => 
-              <View style={{borderBottomWidth: 1, borderBottomColor: 'gray',}}>
+              <View style={{margin: 4, borderWidth: 1, borderRadius: 4, borderColor: 'gray',}}>
                 <TouchableOpacity onPress={() => navigation.navigate("QComment", {question: item})}  >
                   <Text style={{padding: 5, fontSize: 18}}>{item.name}</Text>
                   <Text style={{padding: 5, fontSize: 15}}>{item.question}</Text>
@@ -124,7 +124,7 @@ export default function QuestionScreen({navigation}) {
                 </TouchableOpacity>
               </View>
             }
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.QID}
           />
         {/* </View> */}
       </View>

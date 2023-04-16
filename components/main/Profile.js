@@ -1,78 +1,99 @@
 //this screen is for user to start new live peer tutoring
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+import { db, auth } from '../../firebase'
+import Constants from 'expo-constants';
 
 export default function ProfileScreen({navigation}) {
+
+      const stateUsers = useSelector((state) => state.user);
+      console.log("stateUSers")
+      console.log(stateUsers[1])
+    //   useEffect(() => {
+    //     console.log("stateUSers")
+    //     console.log(stateUsers)
+    //   },[]);
+
+
+    const readCollection = async () => {
+        const qCollection = collection(db, "Q's");
+        const qSnapshot = await getDocs(qCollection);
+        const idArray = qSnapshot.docs.map((doc) => doc.id);
+        const dataArray = qSnapshot.docs.map((doc) => doc.data());
+        const newItems = items.slice(); // Create a copy of the existing items array
+        for (let i = 0; i < idArray.length; i++) {
+          newItems.push({ label: dataArray[i].Tag, value: idArray[i] });
+        }
+        setItems(newItems);
+        // console.log(items)
+      }; 
+
     return (
-        <View style={[{ flex: 1, backgroundColor: "white" }]}>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity
+        <SafeAreaView style={[{ flex: 1, backgroundColor: "white",  }]}>
+            <View style={styles.profile}>
+                <Image source={{ uri: 'https://cdn.icon-icons.com/icons2/2248/PNG/512/face_icon_137648.png' }} style={{height: 60, width: 60}} />
+                <View style={styles.followView}>
+                <Text>30</Text>
+                <Text style={{fontSize:10}}>posts</Text>
+                </View>
+                <View style={styles.followView}>
+                <Text>120</Text>
+                <Text style={{fontSize:10}}>followers</Text>
+                </View>
+                <View style={styles.followView}>
+                <Text>26</Text>
+                <Text style={{fontSize:10}}>following</Text>
+                </View>
+
+            </View>
+            <View style={styles.postContainer}>
+            </View>
+            <TouchableOpacity
                     onPress={() => navigation.navigate("Setting")}
                     style={styles.button}
                 >
                     <Text style={styles.text}>Go setting</Text>
                 </TouchableOpacity>
-            </View>
-        </View>
+        </SafeAreaView>
+        // <SafeAreaView style={[{ flex: 1, backgroundColor: "white",  }]}>
+        //     <View style={styles.buttonContainer}>
+        //         <View style={{flexDirection: "row", backgroundColor: 'green', width: "100%"}}>
+        //             <Image source={{ uri: 'https://cdn.icon-icons.com/icons2/2248/PNG/512/face_icon_137648.png' }} style={{height: 100, width: 100}} />
+        //             <Text style={{padding: 10}}>30</Text>
+        //             <Text style={{padding: 10}}>20</Text>
+        //         </View>
+        //         <TouchableOpacity
+        //             onPress={() => navigation.navigate("Setting")}
+        //             style={styles.button}
+        //         >
+        //             <Text style={styles.text}>Go setting</Text>
+        //         </TouchableOpacity>
+        //     </View>
+        // </SafeAreaView>
     );
 }
 const styles = StyleSheet.create({
-    cameraContainer: {
+    profile: {
         flex: 1,
-        alignSelf: 'center'
-    },
-    fixedRatio: {
-        flex: 1,
-        aspectRatio: 1.5
-    },
-    image: {
-        flex: 1,
-        aspectRatio: 1.5,
-        alignSelf: 'center'
-    },
-    container: {
-        aspectRatio: 1.5,
-        flex: 1
-    },
-    buttonContainer: {
-        width: '50%',
-        justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 5,
+        justifyContent: 'center',
+        // paddingTop: Constants.statusBarHeight,
+        backgroundColor: '#ecf0f1',
         flexDirection: 'row'
     },
-    button: {
-        backgroundColor: '#F38181',
-        width: '85%',
-        padding: 8,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft:2,
-        marginRight:2,
-        marginTop:10,
-        alignSelf: 'center',
-        justifyContent: 'space-between',
-        flexWrap: "wrap",
-        alignContent: "space-around"
+     postContainer: {
+         flex:2,
+         backgroundColor:'#E2F5EF'
     },
-    button1: {
-        backgroundColor: '#F38181',
-        width: '85%',
-        padding: 8,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft:180,
-        marginRight:2,
-        marginTop:2,
-        alignSelf: 'center',
-        justifyContent: 'space-between',
-        flexWrap: "wrap",
-        alignContent: "space-around"
+    followView: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        flexGrow: 0.9,
+
     },
-    text: {
-        color: 'white',
-    }
-})
+
+});
