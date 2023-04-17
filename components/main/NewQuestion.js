@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
+import { TouchableWithoutFeedback,Keyboard, KeyboardAvoidingView,StyleSheet, Text, View, Button, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
 import { signOut, updateProfile } from 'firebase/auth';
@@ -49,16 +49,32 @@ export default function NewQuestionScreen({route, navigation}) {
                ({email}) => email == user.email
           );
           if (foundUser.length > 0) {
-               setUsersusers(foundUser[0]);
-               setQuestions({...questions, name: stateUsers[1].name});
-               setTagTag()
-               console.log("usersusers")
-               console.log(questions)
-               console.log("---")
-               console.log(stateUsers)
+               getUser(user.uid)
+               // setUsersusers(foundUser[0]);
+               // setQuestions({...questions, name: stateUsers[1].name});
+               // setTagTag()
+               // console.log("usersusers")
+               // console.log(questions)
+               // console.log("---")
+               // console.log(stateUsers)
           }
           readCollection()
      }, [stateUsers]);
+
+     async function getUser(uid) {
+          try {
+            const userRef = doc(collection(db, "users"), uid);
+            const userDoc = await getDoc(userRef);  
+            if (userDoc.exists()) {
+              setUsersusers({...usersusers, name: userDoc.data().name})
+              console.log("User data:", userDoc.data());
+            } else {
+              console.log("No such document!");
+            }
+          } catch (e) {
+            console.error("Error getting user: ", e);
+          }
+     }
 
      useEffect( () => {
           // if (!user.email) {
@@ -81,11 +97,11 @@ export default function NewQuestionScreen({route, navigation}) {
 
 
      const setTagTag = async() => {
-          setQuestions("")
+          // setQuestions("")
           const result = items.find((item) => item.value === value);
-          // result.label
+         console.log(result.label)
           // setQuestions({...questions, tag: result.label});
-          return(result.tag)
+          return result.label
      }
 
   //get tag information from cloudfirestore
@@ -104,19 +120,23 @@ export default function NewQuestionScreen({route, navigation}) {
 
      async function sendQuestion() {
           try {
-               // const userRef = doc(collection(db, "Q's", value, "question"))
+               const userRef = doc(collection(db, "Q's", value, "question"))
                // console.log(questions)
                // await setDoc(userRef, { uid: questions.uid || "", name: questions.name, question: questions.question, time: questions.time, tag: questions.tag });
-               setQuestions({...questions, question: text, tag:setTagTag()});
-               console.log('A' + questions)
+               // setQuestions({...questions, question: text, tag:await setTagTag()});
+               await setDoc(userRef, { uid: questions.uid, name: usersusers.name, question: text, tag: await setTagTag(), time: Date()});
+               console.log(usersusers)
                console.log("User added successfully!");
           } catch (e) {
                console.error("Error adding user: ", e);
           }
      }
+  
 
      return (
+          
           <SafeAreaView style={styles.container}>
+          
                <View style={{flex:1}}>
                     <DropDownPicker
                          open={open}
@@ -129,6 +149,24 @@ export default function NewQuestionScreen({route, navigation}) {
                     />
                </View>
                {/* <View style={{flex:5}}> */}
+               <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{width: '100%', 
+                    flex: 1, 
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    padding: 4,
+                    backgroundColor: "white"}}>
+                    <View 
+                         style={{
+                              width: '100%', 
+                              flex: 1, 
+                              alignItems: 'center',
+                              justifyContent: 'flex-start',
+                              padding: 4,
+                              backgroundColor: "white"
+                         }}
+                    >
                     <TextInput
                          multiline
                          placeholder="Ask question..."
@@ -137,8 +175,10 @@ export default function NewQuestionScreen({route, navigation}) {
                     />
                     <TouchableOpacity onPress={sendQuestion} style={styles.button}> 
                          <Text style={styles.buttonText}>send</Text>
-                    </TouchableOpacity>      
-               {/* </View> */}
+                    </TouchableOpacity> 
+               </View>
+
+               </KeyboardAvoidingView>     
           </SafeAreaView>
      )
 }

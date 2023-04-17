@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { KeyboardAvoidingView, StyleSheet, TextInput, Text, View, Button } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, TextInput, Text, View, Button, Image, TouchableOpacity} from 'react-native';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
 import { auth } from '../../firebase';
-import { collection, getDocs, setDoc, doc } from "firebase/firestore";
+import { collection, getDocs, getDoc, setDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase';
 
 export default function SignupScreen({ navigation }) {
@@ -30,6 +30,22 @@ export default function SignupScreen({ navigation }) {
           })
           return unsubscribe
      }, [])
+
+     async function getUser(uid) {
+          try {
+            const userRef = doc(collection(db, "users"), uid);
+            const userDoc = await getDoc(userRef);  
+            if (userDoc.exists()) {
+              setUsersusers({...usersusers, name: userDoc.data().name})
+              console.log("User data:", userDoc.data());
+            } else {
+              console.log("No such document!");
+            }
+          } catch (e) {
+            console.error("Error getting user: ", e);
+          }
+     }
+
 
      const handleSignUp = () => {
           createUserWithEmailAndPassword(auth, email, password)
@@ -70,7 +86,21 @@ export default function SignupScreen({ navigation }) {
                style={styles.container}
                behavior="padding"
           >
+               <Text style={styles.tittle}>
+                    OUTPAL
+                </Text>
+               <Image 
+                    source={{ uri:'https://static.wixstatic.com/media/b96e2b_23e7dce1a5754474916ca336c5d8d659~mv2.png/v1/fill/w_646,h_606,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/%E3%83%AD%E3%82%B4%E3%80%80%E7%B7%A8%E9%9B%86.png'}}
+                    style={{height: '21%', width: '47%', margin: 5}}
+               />
+               
+                <Text style={styles.SUBtittle}>
+                    FROM
+                    EDUPOPS
+                </Text>
+
                <View style={styles.inputSection}>
+
                     <TextInput
                          autoCapitalize='none'
                          placeholder="name"
@@ -96,7 +126,7 @@ export default function SignupScreen({ navigation }) {
                </View>
 
                <View style={styles.buttonSection}>
-                    <Button 
+                    {/* <Button 
                          outline
                          onPress={handleSignUp}
                          style={styles.button}
@@ -106,7 +136,25 @@ export default function SignupScreen({ navigation }) {
                          onPress={() => navigation.navigate('Login')}
                          style={styles.button}
                          title="You have your account already?"
-                    />
+                    /> */}
+                    <TouchableOpacity
+                         onPress={handleSignUp}
+                         style={styles.button}
+                    >
+                         <Text style={styles.buttonText}>Signup</Text>
+                    </TouchableOpacity>
+                    {/* <Button 
+                         onPress={handleLogin}
+                         style={styles.button}
+                         title="Login"
+                    /> */}
+                    <TouchableOpacity
+                         outline
+                         onPress={() => navigation.navigate("Login")}
+                         style={styles.button2}
+                    >
+                         <Text style={styles.buttonText}>You have your account already?</Text>
+                    </TouchableOpacity>
                </View>
           </KeyboardAvoidingView>
      );
@@ -117,7 +165,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: "whtie"
+    backgroundColor: "white"
   },
   inputSection: {
     width: '80%',
@@ -143,4 +191,39 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 5,
   },
+  tittle: {
+     margin: 24,
+     fontSize: 22,
+     fontWeight: 'bold',
+     textAlign: 'center',
+     color: 'black',
+     // marginTop: 100,
+ },
+ SUBtittle:{
+     margin: 24,
+     fontSize: 14,
+     textAlign: 'center',
+     color: 'black',
+     // marginTop: 120,
+ },
+ button: {
+     marginTop: "auto",
+     backgroundColor: "lightblue",
+     padding: 10,
+     borderRadius: 4,
+     alignItems: "center",
+     marginVertical: 10,
+},
+button2: {
+     marginTop: "auto",
+     backgroundColor: "lightgray",
+     padding: 10,
+     borderRadius: 4,
+     alignItems: "center",
+     marginVertical: 6,
+},
+buttonText: {
+     color: "white",
+     fontWeight: "bold",
+},
 });

@@ -4,6 +4,8 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase'
 import { useDispatch, useSelector } from 'react-redux';
+import { AntDesign } from '@expo/vector-icons'; 
+
 
 
 export default function QuestionScreen({navigation}) {
@@ -86,6 +88,30 @@ export default function QuestionScreen({navigation}) {
     // console.log(IDArray)
   }
 
+  const setAllList = async () => {
+    setQuestionslist([]);
+    for (let j = 0; j < items.length; j++) {
+
+    }
+    const qCollection = collection(db, "Q's", value, "question");
+    const qSnapshot = await getDocs(qCollection);
+    const idArray = qSnapshot.docs.map((doc) => doc.id);
+    const dataArray = qSnapshot.docs.map((doc) => doc.data());
+    // const newItems = items.slice(); // Create a copy of the existing items array
+    const newItems = [];
+
+    const Collection = collection(db, "Q's", value, "question");
+    const Snapshot = await getDocs(Collection);
+    const IDArray = Snapshot.docs.map((doc) => doc.id);
+
+    for (let i = 0; i < idArray.length; i++) {
+      newItems.push({ question: dataArray[i]?.question || "", uid: dataArray[i].uid, name: dataArray[i].name, time: dataArray[i].time, tag: dataArray[i].tag, TagID: value, QID: IDArray[i] });
+    }
+    setQuestionslist(newItems);
+    // console.log('!!!!!!!!!')
+    // console.log(IDArray)
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: 'center', backgroundColor: "white"}}>
       <View style={{flex:2, flexDirection: 'row'}}>
@@ -95,6 +121,12 @@ export default function QuestionScreen({navigation}) {
         <TouchableOpacity onPress={() => navigation.navigate("NewQuestion")} style={styles.button}> 
           <Text style={styles.buttonText}>New Question</Text>
         </TouchableOpacity>  
+        <TouchableOpacity 
+              style={{margin: 7, alignSelf: 'flex-end'}}
+              onPress={()=> navigation.navigate("Search", {Q: true})}
+          >
+            <AntDesign name="search1" size={24} color="black" />
+          </TouchableOpacity>
       </View>
       <DropDownPicker
           open={open}

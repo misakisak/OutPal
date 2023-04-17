@@ -1,15 +1,16 @@
 //this screen is for user to start new live peer tutoring
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity, TextInput, SafeAreaView, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity, TextInput,TouchableWithoutFeedback,Keyboard, KeyboardAvoidingView, SafeAreaView, FlatList } from 'react-native';
 import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase'
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function QCommentScreen({navigation, route}) {
+    const user = auth.currentUser
      const Q = route.params.question
-     // console.log("route.params.question")
-     // console.log(route.params.question)
+    //  console.log("route.params.question")
+    //  console.log(route.params.question)
      const stateUsers = useSelector((state) => state.user)[1];
 
      const [text, setText] = useState("")
@@ -22,21 +23,41 @@ export default function QCommentScreen({navigation, route}) {
      const [listComment, setListComment] = useState(
 
      )
-     console.log("stateusers")
-     console.log(stateUsers)
 
-//     listComment.sort((a, b) => new Date(a.time) - new Date(b.time)).reverse();
+     const [name, setName] = useState('')
+    //  console.log("stateusers")
+    //  console.log(stateUsers)
+
+    // listComment.sort((a, b) => new Date(a.time) - new Date(b.time)).reverse();
      useEffect( () => {
           setList()
      }, []);
+     async function getUser(uid) {
+        try {
+          const userRef = doc(collection(db, "users"), uid);
+          const userDoc = await getDoc(userRef);  
+          if (userDoc.exists()) {
+            // setUsersusers({...usersusers, name: userDoc.data().name})
+            console.log("User data:", userDoc.data().name);
+            // return userDoc.data().name
+            setName(userDoc.data().name)
+            console.log(name)
+          } else {
+            console.log("No such document!");
+          }
+        } catch (e) {
+          console.error("Error getting user: ", e);
+        }
+   }
 
      function sendComment(questions) {
           try {
                const userRef = doc(collection(db, "Q's", Q.TagID, "question", Q.QID, "qcomments"))
                // const userRef = doc(collection(db, ("question", "Q's")), value)
                // await setDoc(doc(db, "Q's", value, "question"), data);
-                setDoc(userRef, { comment: text, uid: Q.uid, time: Date(), name:stateUsers[1].name });
-               // console.log(questions.tag)
+               getUser(user.uid)
+                setDoc(userRef, { comment: text, uid: user.uid, time: Date(), name: name});
+            //    console.log(usersusers.name)
                console.log("Comment added successfully!");
                setList();
           } catch (e) {
@@ -67,9 +88,15 @@ export default function QCommentScreen({navigation, route}) {
      }
 
     return (
+        // <KeyboardAvoidingView
+        //             style={styles.container}
+        //             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        //     >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView style={[{ flex: 1, backgroundColor: "white" }]}>
+
                {/* <Text style={{margin:30}}>QComment</Text> */}
-               <View style={{borderBottomWidth: 1, borderBottomColor: 'gray',}}>
+               <View style={{borderWidth: 1, borderColor: 'gray',borderRadius: 10, margin: 5}}>
                   <Text style={{padding: 5, fontSize: 18}}>{Q.name}</Text>
                   <Text style={{padding: 5, fontSize: 15}}>{Q.question}</Text>
                   <Text style={{padding: 5, fontSize: 15}}>{Q.time}</Text>
@@ -91,12 +118,19 @@ export default function QCommentScreen({navigation, route}) {
                          keyExtractor={item => item.id}
                     />
                </View>
+                <KeyboardAvoidingView
+                    style={styles.container}
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                >
+                <View style={styles.container}>
                <TextInput
                     multiline
                     placeholder="Ask question..."
                     onChangeText={(text) => setText(text)}
-                    style={{ flex: 1, width: '90%', alignSelf: "center", borderRadius: 10, marginBottom: 5, borderWidth: 1, borderColor: 'lightgray'}}
+                    style={{ flex: 0.5, width: '90%', alignSelf: "center", borderRadius: 10, marginBottom: 5, borderWidth: 1, borderColor: 'lightgray'}}
                />
+               </View>
+               </KeyboardAvoidingView>
                <TouchableOpacity onPress={sendComment} style={styles.button}> 
                          <Text style={styles.buttonText}>send</Text>
                </TouchableOpacity>
@@ -112,6 +146,9 @@ export default function QCommentScreen({navigation, route}) {
             {image && <Image source={{uri: image}} style={styles.image}/>}
             </View> */}
         </SafeAreaView>
+        </TouchableWithoutFeedback>
+        // </KeyboardAvoidingView>
+
     );
 }
 const styles = StyleSheet.create({
@@ -129,7 +166,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     container: {
-        aspectRatio: 1.5,
+        // aspectRatio: 1.5,
         flex: 1
     },
     buttonContainer: {

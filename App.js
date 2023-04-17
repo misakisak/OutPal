@@ -8,7 +8,8 @@ import LoginScreen from './components/auth/Login'
 import SignupScreen from './components/auth/Signup'
 import Main from './components/Main'
 import liveScreen from './components/main/Live';
-import SettingScreen from './components/main/Setting';
+import EditScreen from './components/main/Edit';
+import SettingScreen from './components/main/Setting'
 import AIScreen from './components/main/AI';
 import ProfileScreen from './components/main/Profile';
 import NewQuestionScreen from './components/main/NewQuestion';
@@ -76,12 +77,12 @@ export class App extends Component {
               }}
             />
             <Stack.Screen 
-              name="Setting" 
-              component={SettingScreen}
+              name="Edit" 
+              component={EditScreen}
               navigation={this.props.navigation}
               options={{
-                headerStyle: {backgroundColor: "#95E1D3"},
-                headerTintColor: "white",
+                headerStyle: {backgroundColor: "white"},
+                headerTintColor: "black",
                 headerTitleStyle: {fontWeight: 'bold'}
               }}
             />
@@ -110,6 +111,7 @@ export class App extends Component {
               component={ProfileScreen}
               navigation={this.props.navigation}
               options={{
+                headerShown: false,
                 headerStyle: {backgroundColor: "white", borderWidth: 1, borderColor: "gray",},
                 headerTintColor: "black",
                 headerTitleStyle: {fontWeight: 'bold'},
@@ -121,9 +123,9 @@ export class App extends Component {
               component={NewQuestionScreen}
               navigation={this.props.navigation}
               options={{
-                headerStyle: {backgroundColor: "#95E1D3"},
-                headerTintColor: "white",
-                headerTitleStyle: {fontWeight: 'bold'}
+                headerStyle: {backgroundColor: "white"},
+                headerTintColor: "black",
+                // headerTitleStyle: {fontWeight: 'bold'}
               }}
             />
             <Stack.Screen 
@@ -131,9 +133,9 @@ export class App extends Component {
               component={QCommentScreen}
               navigation={this.props.navigation}
               options={{
-                headerStyle: {backgroundColor: "#95E1D3"},
-                headerTintColor: "white",
-                headerTitleStyle: {fontWeight: 'bold'}
+                headerStyle: {backgroundColor: "white"},
+                headerTintColor: "black",
+                // headerTitleStyle: {fontWeight: 'bold'}
               }}
             />
             <Stack.Screen 
@@ -143,6 +145,16 @@ export class App extends Component {
               options={{
                 headerStyle: {backgroundColor: "#95E1D3"},
                 headerTintColor: "white",
+                headerTitleStyle: {fontWeight: 'bold'}
+              }}
+            />
+            <Stack.Screen 
+              name="Setting" 
+              component={SettingScreen}
+              navigation={this.props.navigation}
+              options={{
+                headerStyle: {backgroundColor: "white"},
+                headerTintColor: "black",
                 headerTitleStyle: {fontWeight: 'bold'}
               }}
             />

@@ -2,8 +2,28 @@
 
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity, ScrollView, Dimensions, TextInput, SafeAreaView} from 'react-native';
+import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+import { db, auth } from '../../firebase'
+import { useIsFocused } from '@react-navigation/native';
 
 export default function NewLive({navigation}) {
+    const user = auth.currentUser
+    async function getUser() {
+        try {
+          const userRef = doc(collection(db, "users"), user.uid);
+          const userDoc = await getDoc(userRef);  
+          if (userDoc.exists()) {
+            setUsersusers({...usersusers, name: userDoc.data().name, bio: userDoc.data().bio, uid: userDoc.id, icon: userDoc.data().icon})
+            // console.log("User data:", usersusers);
+          } else {
+            console.log("No such document!");
+          }
+        } catch (e) {
+          console.error("Error getting user: ", e);
+        }
+    }
+
+
     return (
         
         <SafeAreaView style={[{ flex: 1, backgroundColor: "white"}]}>

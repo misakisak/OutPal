@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, Image, Linking, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Button, TextInput, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
 import { signOut, updateProfile } from 'firebase/auth';
@@ -14,7 +14,7 @@ import { uuidv4 } from '@firebase/util';
 import { useIsFocused } from '@react-navigation/native';
 import { setAutoFreeze } from 'immer';
 
-export default function Setting({route, navigation}) {  
+export default function EditScreen({route, navigation}) {  
   const user = auth.currentUser;
   console.log(user.email)
   const [imageUri, setImageUri] = useState(null);
@@ -69,18 +69,18 @@ export default function Setting({route, navigation}) {
     });
   };
 
-//   const updateDetails = async() => {
-//     dispatch(
-//       update({
-//         // email: usersusers.email,
-//         name: usersusers.name,
-//         bio: usersusers.bio,
-//       })
-//     );
-//     console.log(usersusers.name)
-//     // console.log
-//     updateUser(usersusers.uid, usersusers.name, usersusers.bio)
-//   }
+  const updateDetails = async() => {
+    dispatch(
+      update({
+        // email: usersusers.email,
+        name: usersusers.name,
+        bio: usersusers.bio,
+      })
+    );
+    console.log(usersusers.name)
+    // console.log
+    updateUser(usersusers.uid, usersusers.name, usersusers.bio)
+  }
 
   //get user information from cloudfirestore
   async function getUser(uid) {
@@ -98,24 +98,24 @@ export default function Setting({route, navigation}) {
     }
   }
 
-//   async function updateUser(uid, name, bio) {
-//     try {
-//       const userRef = doc(collection(db, "users"), uid);
-//       if (bio && name){
-//         await updateDoc(userRef, { name: name, bio: bio });
-//       }
-//       else if (bio){
-//         await updateDoc(userRef, { bio: bio });
-//       }
-//       else if (name) {
-//         await updateDoc(userRef, { name: name});
-//       }
-//       console.log("User added successfully");
-//       alert("Updated successfully👍")
-//     } catch (e) {
-//       console.error("Error adding user: ", e);
-//     }
-//   }
+  async function updateUser(uid, name, bio) {
+    try {
+      const userRef = doc(collection(db, "users"), uid);
+      if (bio && name){
+        await updateDoc(userRef, { name: name, bio: bio });
+      }
+      else if (bio){
+        await updateDoc(userRef, { bio: bio });
+      }
+      else if (name) {
+        await updateDoc(userRef, { name: name});
+      }
+      console.log("User added successfully");
+      alert("Updated successfully👍")
+    } catch (e) {
+      console.error("Error adding user: ", e);
+    }
+  }
 
 
   // const handleButtonPress = async() => {
@@ -136,59 +136,44 @@ export default function Setting({route, navigation}) {
   //   // }
   // }
   
-//   const handleButtonPress = async() => {
-//     const result =  await ImagePicker.launchImageLibraryAsync({
-//       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-//     });
-//     setImageUri(result.assets[0].uri)
-//     // console.log(result)
-//     const uri = result.assets[0].uri;
-//     // const storageRef = storage.ref();
-//     // const imageRef = storageRef.child('images/image.jpg');
-//     const image = await fetch(result.assets[0].uri);
-//       const bytes = await image.blob();
-//     const fileRef = ref(storage, uuidv4());
+  const handleButtonPress = async() => {
+    const result =  await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    });
+    setImageUri(result.assets[0].uri)
+    // console.log(result)
+    const uri = result.assets[0].uri;
+    // const storageRef = storage.ref();
+    // const imageRef = storageRef.child('images/image.jpg');
+    const image = await fetch(result.assets[0].uri);
+      const bytes = await image.blob();
+    const fileRef = ref(storage, uuidv4());
 
-//     const file = new File([bytes], uri);
-//     // const uploadTask = putFile(storageRef, file)
-//     // uploadTask.then((snapshot) => {
-//     //   console.log("Uploaded a blob or file!");
-//     //   const downloadURL = getDownloadURL(storageRef);
-//     // });
-//     await uploadBytes(fileRef, file)
+    const file = new File([bytes], uri);
+    // const uploadTask = putFile(storageRef, file)
+    // uploadTask.then((snapshot) => {
+    //   console.log("Uploaded a blob or file!");
+    //   const downloadURL = getDownloadURL(storageRef);
+    // });
+    await uploadBytes(fileRef, file)
 
-//     const farmerImageUrl = await getDownloadURL(fileRef);
-//     // setImageUri(farmerImageUrl)
-//     console.log(farmerImageUrl)
+    const farmerImageUrl = await getDownloadURL(fileRef);
+    // setImageUri(farmerImageUrl)
+    console.log(farmerImageUrl)
 
-//     try {
-//       const userRef = doc(collection(db, "users"), user.uid);
-//         await updateDoc(userRef, { icon: farmerImageUrl });
+    try {
+      const userRef = doc(collection(db, "users"), user.uid);
+        await updateDoc(userRef, { icon: farmerImageUrl });
 
-//       console.log("User added successfully!");
-//       // setUsersusers(...usersusers, icon: farmerImageUrl)
-//       setA(true)
-//       alert("Picture uploaded successfully👍")
-//     } catch (e) {
-//       console.error("Error adding user: ", e);
-//     }
+      console.log("User added successfully!");
+      // setUsersusers(...usersusers, icon: farmerImageUrl)
+      setA(true)
+      alert("Picture uploaded successfully👍")
+    } catch (e) {
+      console.error("Error adding user: ", e);
+    }
 
-//   } 
-
-const OpenURLButton = ({ url, children, style, style2, style3, style4}) => {
-     const handlePress = useCallback(async () => {
-         const supported = await Linking.canOpenURL(url);
-         if (supported) {
-             await Linking.openURL(url);
-         } else {
-             Alert.alert(`Don't know how to open this URL: ${url}`);
-         }
-         }, [url]);
- 
-     return <View style={style4}>
-          <TouchableOpacity onPress={handlePress} style={[style, style2]} ><Text style={style3}>{children}</Text></TouchableOpacity>
-         </View>;
- };
+  } 
 
 
   return (
@@ -198,12 +183,12 @@ const OpenURLButton = ({ url, children, style, style2, style3, style4}) => {
       <View style={styles.detailsContainer}>
         <View style={styles.detailsContent}>
           <View style={styles.detailInput}>
-          {/* <Image source={{ uri: usersusers.icon }} style={{ justifyContent: 'center' ,textAlign: 'center',borderRadius: 100,height: 60, width: 80, margin: 10}} /> */}
+          <Image source={{ uri: usersusers.icon }} style={{ justifyContent: 'center' ,textAlign: 'center',borderRadius: 100,height: 60, width: 80, margin: 10}} />
             <Text>Name: {usersusers.name} </Text>
             <Text>Email: {usersusers.email} </Text>
           </View>
 
-          {/* <View style={styles.detailInput}>
+          <View style={styles.detailInput}>
             <Text>Name: </Text>
             <TextInput
               placeholder="new name"
@@ -225,32 +210,23 @@ const OpenURLButton = ({ url, children, style, style2, style3, style4}) => {
               style={styles.input}
               defaultValue={usersusers.bio}
             />
-          </View> */}
+          </View>
         </View>
       </View>
 
       <View style={styles.actionContainer}>
-        {/* <Button
+        <Button
           onPress={updateDetails}
           title={"Update Details"}
-        /> */}
-        <Button
+        />
+        {/* <Button
           onPress={handleLogout}
           style={styles.button}
           title="Logout"
-        />
+        /> */}
       </View>
-      <View styles={[ styles.buttonContainer]}>
-          <Text>Learn more about Edupops</Text>
-          <OpenURLButton url={'https://edupopsofficial.wixsite.com/edupops'} style={styles.buttonOutline3} style2={styles.button3} style3={styles.buttonText3} style4={styles.button33} > 
-               Official Web Site
-          </OpenURLButton>
-          <OpenURLButton url={'https://twitter.com/edu_pops'} style={styles.buttonOutline3} style2={styles.button3} style3={styles.buttonText3} > 
-               Twitter: @edu_pops
-          </OpenURLButton>
-     </View>
-      {/* <Button title="Pick Image" onPress={handleButtonPress}/>
-      {imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200 }} />} */}
+      <Button title="Pick Image" onPress={handleButtonPress}/>
+      {imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200 }} />}
     </View>
   )
 }
@@ -291,7 +267,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   actionContainer: {
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },

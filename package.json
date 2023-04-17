@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
+    "@react-native-community/clipboard": "^1.5.1",
     "@react-native-firebase/app": "^17.4.0",
     "@react-native-firebase/auth": "^17.4.0",
     "@react-navigation/material-bottom-tabs": "^6.2.15",
@@ -17,6 +18,7 @@
     "@react-navigation/stack": "^6.3.16",
     "@reduxjs/toolkit": "1.6.2",
     "expo": "~48.0.9",
+    "expo-clipboard": "^4.1.2",
     "expo-image-picker": "^14.1.1",
     "expo-status-bar": "~1.4.4",
     "firebase": "^9.19.1",
