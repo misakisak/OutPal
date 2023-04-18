@@ -1,27 +1,25 @@
 import React,  { useState, useEffect } from 'react';
-import { Text, View, Button, StyleSheet, SafeAreaView, TouchableOpacity, VirtualizedList, FlatList } from 'react-native';
+import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity, VirtualizedList, FlatList } from 'react-native';
 import DropDownPicker from "react-native-dropdown-picker";
 import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase'
 import { useDispatch, useSelector } from 'react-redux';
 import { AntDesign } from '@expo/vector-icons'; 
-
-
+import { useIsFocused } from '@react-navigation/native';
 
 export default function QuestionScreen({navigation}) {
   const user = auth.currentUser;
   const [open, setOpen] = useState(false);
-  // const [value, setValue] = useState(null);
-  const [value, setValue] = useState("v8F1N37ud3vnUQ2KsCE3")
-
+  const [value, setValue] = useState(null);
+  const [a, setA] = useState(true)
 
   const [items, setItems] = useState([])
   const stateUsers = useSelector((state) => state.user);
   const [questionslist, setQuestionslist] = useState([
     {question: 'why?', uid: '', name: '', time: Date(), tag: '', TagID: '', QID: ''}
   ])
-  const sortedData = questionslist.sort((a, b) => new Date(a.time) - new Date(b.time)).reverse();
-  // console.log(questionslist)
+
+  const isFocused = useIsFocused();
 
   useEffect( () => {
     if (!user.email) {
@@ -36,16 +34,23 @@ export default function QuestionScreen({navigation}) {
     if (foundUser.length > 0) {
       setUsersusers(foundUser[0]);
       readCollection()
-      // console.log('usersusers')
-      // console.log(usersusers)
-      setList()
-      // setQuestions({...questions, name: foundUser[0].name});
+      console.log('usersusers')
     }
   }, [stateUsers]);
 
-
+  useEffect(() => {
+    if (isFocused){
+      if (value == null){
+        setAllList()
+      }
+      setList()
+    }
+  },[isFocused]);
 
   useEffect(() => {
+    if (value == null){
+      setAllList()
+    }
     setList()
   },[value]);
 
@@ -64,7 +69,6 @@ export default function QuestionScreen({navigation}) {
       newItems.push({ label: dataArray[i].Tag, value: idArray[i] });
     }
     setItems(newItems);
-    // console.log(items)
   }; 
 
   const setList = async () => {
@@ -73,7 +77,6 @@ export default function QuestionScreen({navigation}) {
     const qSnapshot = await getDocs(qCollection);
     const idArray = qSnapshot.docs.map((doc) => doc.id);
     const dataArray = qSnapshot.docs.map((doc) => doc.data());
-    // const newItems = items.slice(); // Create a copy of the existing items array
     const newItems = [];
 
     const Collection = collection(db, "Q's", value, "question");
@@ -81,35 +84,34 @@ export default function QuestionScreen({navigation}) {
     const IDArray = Snapshot.docs.map((doc) => doc.id);
 
     for (let i = 0; i < idArray.length; i++) {
-      newItems.push({ question: dataArray[i]?.question || "", uid: dataArray[i].uid, name: dataArray[i].name, time: dataArray[i].time, tag: dataArray[i].tag, TagID: value, QID: IDArray[i] });
+      newItems.push({ question: dataArray[i]?.question || "", uid: dataArray[i].uid, name: dataArray[i].name, time: dataArray[i].time, tag: dataArray[i].tag, TagID: value, QID: IDArray[i], icon: dataArray[i].icon });
     }
     setQuestionslist(newItems);
-    // console.log('!!!!!!!!!')
-    // console.log(IDArray)
+    console.log('!!!!!!!!!')
+    console.log(questionslist)
   }
 
   const setAllList = async () => {
-    setQuestionslist([]);
-    for (let j = 0; j < items.length; j++) {
-
-    }
-    const qCollection = collection(db, "Q's", value, "question");
-    const qSnapshot = await getDocs(qCollection);
-    const idArray = qSnapshot.docs.map((doc) => doc.id);
-    const dataArray = qSnapshot.docs.map((doc) => doc.data());
-    // const newItems = items.slice(); // Create a copy of the existing items array
+    // setQuestionslist([]);
     const newItems = [];
+    for (let j = 0; j < items.length; j++) {
+      const qCollection = collection(db, "Q's", items[j].value, "question");
+      const qSnapshot = await getDocs(qCollection);
+      const idArray = qSnapshot.docs.map((doc) => doc.id);
+      const dataArray = qSnapshot.docs.map((doc) => doc.data());      
 
-    const Collection = collection(db, "Q's", value, "question");
-    const Snapshot = await getDocs(Collection);
-    const IDArray = Snapshot.docs.map((doc) => doc.id);
+      const Collection = collection(db, "Q's", items[j].value, "question");
+      const Snapshot = await getDocs(Collection);
+      const IDArray = Snapshot.docs.map((doc) => doc.id);
 
-    for (let i = 0; i < idArray.length; i++) {
-      newItems.push({ question: dataArray[i]?.question || "", uid: dataArray[i].uid, name: dataArray[i].name, time: dataArray[i].time, tag: dataArray[i].tag, TagID: value, QID: IDArray[i] });
+      for (let i = 0; i < idArray.length; i++) {
+        newItems.push({question: dataArray[i]?.question || "", uid: dataArray[i].uid, name: dataArray[i].name, time: dataArray[i].time, tag: dataArray[i].tag, TagID: dataArray[i].TagID, QID: IDArray[i], icon: dataArray[i].icon })
+      }
     }
     setQuestionslist(newItems);
-    // console.log('!!!!!!!!!')
-    // console.log(IDArray)
+    
+    console.log('!!!!!!!!!')
+    console.log(questionslist)
   }
 
   return (
@@ -137,19 +139,16 @@ export default function QuestionScreen({navigation}) {
           setItems={setItems}
           style={{flex: 1, margin: 4, width: '50%', flexDirection: 'row'}}
       />
-      
-      {/* <View style={{flex: 1, margin: 4, width: '95%'}}> */}
-        
-      {/* </View> */}
         <View style={{flex: 20,  marginLeft: 4, }}>
-        {/* <View style={{flex: 1, margin: 4, width: '95%'}}> */}
-        {/* style={{borderBottomWidth: 1, borderBottomColor: 'gray',}} */}
           <FlatList
             data={questionslist}
             renderItem={({item}) => 
               <View style={{margin: 4, borderWidth: 1, borderRadius: 4, borderColor: 'gray',}}>
-                <TouchableOpacity onPress={() => navigation.navigate("QComment", {question: item})}  >
-                  <Text style={{padding: 5, fontSize: 18}}>{item.name}</Text>
+                <TouchableOpacity onPress={() => navigation.navigate("Other Profile", {uid: item.uid})}>
+                    <Image source={{ uri: item.icon }} style={{borderRadius: 100,height: 60, width: 80, margin: 3}} />
+                    <Text style={{padding: 5, fontSize: 18}}>{item.name}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("QComment", {question: item})}>
                   <Text style={{padding: 5, fontSize: 15}}>{item.question}</Text>
                   <Text style={{padding: 5, fontSize: 15}}>{item.time}</Text>
                   <Text style={{padding: 5, fontSize: 15}}>{item.tag}</Text>
@@ -158,10 +157,7 @@ export default function QuestionScreen({navigation}) {
             }
             keyExtractor={item => item.QID}
           />
-        {/* </View> */}
       </View>
-      
-         
     </SafeAreaView>
   )
 }
@@ -224,12 +220,12 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 4,
   //  alignItems: 'flex-strt',
-    marginVertical: 6,
+    // marginVertical: 6,
     margin: 5,
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 12
+    fontSize: 12,
   },
 });

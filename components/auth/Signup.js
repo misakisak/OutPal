@@ -65,7 +65,7 @@ export default function SignupScreen({ navigation }) {
                     console.error("Error adding user: ", e);
                }
                console.log('Registered with:', userCredentials.user.email);
-               navigation.navigate("Setting")
+               navigation.navigate("Edit")
           })
           .catch(error => alert(error.message))
      }
@@ -91,7 +91,7 @@ export default function SignupScreen({ navigation }) {
                 </Text>
                <Image 
                     source={{ uri:'https://static.wixstatic.com/media/b96e2b_23e7dce1a5754474916ca336c5d8d659~mv2.png/v1/fill/w_646,h_606,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/%E3%83%AD%E3%82%B4%E3%80%80%E7%B7%A8%E9%9B%86.png'}}
-                    style={{height: '21%', width: '47%', margin: 5}}
+                    style={{height: '20%', width: '46%', margin: 5}}
                />
                
                 <Text style={styles.SUBtittle}>
@@ -179,7 +179,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     marginBottom: 5,
-    borderWidth: 2,
+    borderWidth: 1,
+    borderColor: 'purple',
   },
   buttonSection: {
     width: '60%',
@@ -192,7 +193,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   tittle: {
-     margin: 24,
+     // marginTop: 24,
+     marginButtom: 13,
      fontSize: 22,
      fontWeight: 'bold',
      textAlign: 'center',
@@ -200,7 +202,8 @@ const styles = StyleSheet.create({
      // marginTop: 100,
  },
  SUBtittle:{
-     margin: 24,
+     marginTop: 24,
+     marginBottom: 12,
      fontSize: 14,
      textAlign: 'center',
      color: 'black',

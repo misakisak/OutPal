@@ -15,6 +15,8 @@ import ProfileScreen from './components/main/Profile';
 import NewQuestionScreen from './components/main/NewQuestion';
 import QCommentScreen from './components/main/QComment';
 import SearchScreen from './components/main/Search';
+import OtherProfileScreen from './components/main/OtherProfile';
+import CopyScreen from './components/main/Copy';
 
 const Stack = createStackNavigator();
 
@@ -143,14 +145,35 @@ export class App extends Component {
               component={SearchScreen}
               navigation={this.props.navigation}
               options={{
-                headerStyle: {backgroundColor: "#95E1D3"},
-                headerTintColor: "white",
+                // heardershown
+                headerStyle: {backgroundColor: "white"},
+                headerTintColor: "black",
                 headerTitleStyle: {fontWeight: 'bold'}
               }}
             />
             <Stack.Screen 
               name="Setting" 
               component={SettingScreen}
+              navigation={this.props.navigation}
+              options={{
+                headerStyle: {backgroundColor: "white"},
+                headerTintColor: "black",
+                headerTitleStyle: {fontWeight: 'bold'}
+              }}
+            />
+            <Stack.Screen 
+              name="Other Profile" 
+              component={OtherProfileScreen}
+              navigation={this.props.navigation}
+              options={{
+                headerStyle: {backgroundColor: "white"},
+                headerTintColor: "black",
+                headerTitleStyle: {fontWeight: 'bold'}
+              }}
+            />
+            <Stack.Screen 
+              name="Copy" 
+              component={CopyScreen}
               navigation={this.props.navigation}
               options={{
                 headerStyle: {backgroundColor: "white"},

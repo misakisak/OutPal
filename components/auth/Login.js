@@ -8,7 +8,6 @@ import { append, update } from '../../redux/userSlice';
 // import { auth } from '../../firebase'
 import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase'
-// import map
 
 export default function LoginScreen({ navigation }) {
      const [email, setEmail] = useState('')
@@ -99,7 +98,7 @@ export default function LoginScreen({ navigation }) {
                 </Text>
                <Image 
                     source={{ uri:'https://static.wixstatic.com/media/b96e2b_23e7dce1a5754474916ca336c5d8d659~mv2.png/v1/fill/w_646,h_606,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/%E3%83%AD%E3%82%B4%E3%80%80%E7%B7%A8%E9%9B%86.png'}}
-                    style={{height: '21%', width: '47%', margin: 5}}
+                    style={{height: '21%', width: '48.5%', margin: 5}}
                />
                
                 <Text style={styles.SUBtittle}>
@@ -153,6 +152,7 @@ export default function LoginScreen({ navigation }) {
                          title="You haven't sign up yet?"
                     /> */}
                </View>
+               <View style={{flex:0.5}}></View>
           </View>
      );
 }
@@ -176,8 +176,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     marginBottom: 5,
-    borderWidth: 2,
-    borderColor: 'darkblue'
+    borderWidth: 1,
+    borderColor: 'purple'
   },
   buttonSection: {
     width: '60%',
@@ -190,7 +190,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   tittle: {
-     margin: 24,
+     marginTop: 24,
+     marginBottom:10,
      fontSize: 22,
      fontWeight: 'bold',
      textAlign: 'center',
@@ -198,7 +199,8 @@ const styles = StyleSheet.create({
      // marginTop: 100,
  },
  SUBtittle:{
-     margin: 24,
+     marginTop: 24,
+     marginBottom: 12,
      fontSize: 14,
      textAlign: 'center',
      color: 'black',

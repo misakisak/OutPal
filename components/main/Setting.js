@@ -15,15 +15,15 @@ import { useIsFocused } from '@react-navigation/native';
 import { setAutoFreeze } from 'immer';
 
 export default function Setting({route, navigation}) {  
-  const user = auth.currentUser;
-  console.log(user.email)
+  // const user = auth.currentUser;
+  // console.log(user.email)
   const [imageUri, setImageUri] = useState(null);
   const [a, setA] = useState(false)
 
   const [usersusers, setUsersusers] = useState({
-    email: user.email,
+    email: '',
     name: '',
-    uid: user.uid,
+    uid: route.params.uid,
     bio: '',
   });
   // setUsersusers(route.params.data)
@@ -37,21 +37,21 @@ export default function Setting({route, navigation}) {
   // console.log(stateUsers[1].name)
 
   useEffect( () => {
-    if (!user.email) {
-      return;
-    }
-    if (!stateUsers) {
-      return;
-    }
-    const foundUser = stateUsers.filter(
-      ({email}) => email == user.email
-    );
-    if (foundUser.length > 0) {
+    // if (!user.email) {
+    //   return;
+    // }
+    // if (!stateUsers) {
+    //   return;
+    // }
+    // const foundUser = stateUsers.filter(
+    //   ({email}) => email == user.email
+    // );
+    // if (foundUser.length > 0) {
       // console.log('Founduser[1]')
       // console.log(foundUser[1])
       // setUsersusers(foundUser[0]);
       getUser(usersusers.uid);
-    }
+    // }
 
   }, [isFocused, a]);
 

@@ -17,7 +17,7 @@ export default function QCommentScreen({navigation, route}) {
      // console.log(text)
 
      const [comment, setComment] = useState(
-          {comment: '', uid: '', time: Date(), name: ''}
+          {comment: '', uid: '', time: Date(), name: '', icon: '', QID: '', TagID: ''}
      )
 
      const [listComment, setListComment] = useState(
@@ -25,12 +25,14 @@ export default function QCommentScreen({navigation, route}) {
      )
 
      const [name, setName] = useState('')
+     const [icon, setIcon] = useState('')
     //  console.log("stateusers")
     //  console.log(stateUsers)
 
     // listComment.sort((a, b) => new Date(a.time) - new Date(b.time)).reverse();
      useEffect( () => {
           setList()
+          getUser(user.uid)
      }, []);
      async function getUser(uid) {
         try {
@@ -38,10 +40,11 @@ export default function QCommentScreen({navigation, route}) {
           const userDoc = await getDoc(userRef);  
           if (userDoc.exists()) {
             // setUsersusers({...usersusers, name: userDoc.data().name})
-            console.log("User data:", userDoc.data().name);
+            // console.log("User data:", userDoc.data().name);
             // return userDoc.data().name
             setName(userDoc.data().name)
-            console.log(name)
+            setIcon(userDoc.data().icon)
+            // console.log(name)
           } else {
             console.log("No such document!");
           }
@@ -49,23 +52,34 @@ export default function QCommentScreen({navigation, route}) {
           console.error("Error getting user: ", e);
         }
    }
-
-     function sendComment(questions) {
+//The big baddy is Mitsuhide Akechi. There's a thin line between love and hate, so I think is love towards Nobunaga became hate. 
+     async function sendComment(questions) {
           try {
-               const userRef = doc(collection(db, "Q's", Q.TagID, "question", Q.QID, "qcomments"))
-               // const userRef = doc(collection(db, ("question", "Q's")), value)
-               // await setDoc(doc(db, "Q's", value, "question"), data);
-               getUser(user.uid)
-                setDoc(userRef, { comment: text, uid: user.uid, time: Date(), name: name});
-            //    console.log(usersusers.name)
-               console.log("Comment added successfully!");
-               setList();
+                setComment({...comment, 
+                    comment: text, 
+                    uid: user.uid, 
+                    time: Date(), 
+                    name: name, 
+                    icon: icon, 
+                    QID: Q.QID, 
+                    TagID: Q.TagID
+                })
+               
+                console.log("name")
+                // console.log(Q)
+                
+                const userRef = doc(collection(db, "Q's", Q.TagID, "question", Q.QID, "qcomments"))
+                await setDoc(userRef, comment);
+                const userRef2 = doc(collection(db, "Q's", Q.QID, "question", Q.QID, "qcomments"), userRef.id);
+                await setDoc(userRef2, { QCID:  userRef.id });
+                console.log("Comment added successfully!");
+                setList();
           } catch (e) {
                console.error("Error sending comment: ", e);
           }
      }
 
-     const setList = async () => {
+    const setList = async () => {
           // setListComment([]);
           const qCollection = collection(db, "Q's", Q.TagID, "question", Q.QID, "qcomments");
           const qSnapshot = await getDocs(qCollection);
@@ -83,9 +97,9 @@ export default function QCommentScreen({navigation, route}) {
                newItems.push({ comment: dataArray[i].comment, name: dataArray[i].name, time: dataArray[i].time});
           }
           setListComment(newItems);
-          // console.log('listComment')
-          // console.log(listComment)
-     }
+          console.log('listComment')
+          console.log(listComment)
+    }
 
     return (
         // <KeyboardAvoidingView

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TouchableWithoutFeedback,Keyboard, KeyboardAvoidingView,StyleSheet, Text, View, Button, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
+import {  TouchableWithoutFeedback,Keyboard, KeyboardAvoidingView,StyleSheet, Text, View, Button, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { append, update } from '../../redux/userSlice';
 import { signOut, updateProfile } from 'firebase/auth';
@@ -25,6 +25,7 @@ export default function NewQuestionScreen({route, navigation}) {
           name: usersusers.name,
           time: Date(),
           tag: '',
+          icon: usersusers.icon
      });
 
      const [open, setOpen] = useState(false);
@@ -50,23 +51,18 @@ export default function NewQuestionScreen({route, navigation}) {
           );
           if (foundUser.length > 0) {
                getUser(user.uid)
-               // setUsersusers(foundUser[0]);
-               // setQuestions({...questions, name: stateUsers[1].name});
-               // setTagTag()
-               // console.log("usersusers")
-               // console.log(questions)
-               // console.log("---")
-               // console.log(stateUsers)
+               console.log(questions)
           }
           readCollection()
-     }, [stateUsers]);
+     }, [])
+     // }, [stateUsers]);
 
      async function getUser(uid) {
           try {
             const userRef = doc(collection(db, "users"), uid);
             const userDoc = await getDoc(userRef);  
             if (userDoc.exists()) {
-              setUsersusers({...usersusers, name: userDoc.data().name})
+              setUsersusers({...usersusers, name: userDoc.data().name, icon: userDoc.data().icon})
               console.log("User data:", userDoc.data());
             } else {
               console.log("No such document!");
@@ -92,12 +88,12 @@ export default function NewQuestionScreen({route, navigation}) {
                setTagTag()
                // console.log(questions.uid)
           // }
+          console.log(questions)
      }, [value]);
      
 
 
      const setTagTag = async() => {
-          // setQuestions("")
           const result = items.find((item) => item.value === value);
          console.log(result.label)
           // setQuestions({...questions, tag: result.label});
@@ -124,9 +120,13 @@ export default function NewQuestionScreen({route, navigation}) {
                // console.log(questions)
                // await setDoc(userRef, { uid: questions.uid || "", name: questions.name, question: questions.question, time: questions.time, tag: questions.tag });
                // setQuestions({...questions, question: text, tag:await setTagTag()});
-               await setDoc(userRef, { uid: questions.uid, name: usersusers.name, question: text, tag: await setTagTag(), time: Date()});
-               console.log(usersusers)
+               await setDoc(userRef, { uid: questions.uid, name: usersusers.name, question: text, tag: await setTagTag(), time: Date(), icon: usersusers.icon, TagID: value, QID: userRef.id});
+               const userRef1 = doc(collection(db, "users", user.uid, "question"))
+               await setDoc(userRef1, { TagID: value, QID: userRef.id});
+               console.log('questions')
+               console.log(questions)
                console.log("User added successfully!");
+               alert("Question sended successfully👍")
           } catch (e) {
                console.error("Error adding user: ", e);
           }
