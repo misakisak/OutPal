@@ -19,8 +19,6 @@ export class Main extends Component {
                     barStyle={{ backgroundColor: "white", borderWidth: 1, borderColor: 'lightgray', height: "12%"}}
                     tabBarOptions={{
                          style: {
-                              // borderWidth: 1,
-                              // borderTopColor: 'black',
                               borderWidth: 1, borderColor: 'lightgray'
                          }
                     }}

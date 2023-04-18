@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, StyleSheet, TextInput, Text, View, Button, Image, TouchableOpacity} from 'react-native';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { useDispatch, useSelector } from 'react-redux';
-import { append, update } from '../../redux/userSlice';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
+import { append } from '../../redux/userSlice';
 import { auth } from '../../firebase';
-import { collection, getDocs, getDoc, setDoc, doc } from "firebase/firestore";
+import { collection, getDoc, setDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase';
 
 export default function SignupScreen({ navigation }) {
@@ -69,18 +69,6 @@ export default function SignupScreen({ navigation }) {
           })
           .catch(error => alert(error.message))
      }
-
-     //add user information to cloudfirestore with uid
-     // async function addUser(uid, email) {
-     //      try {
-     //        const userRef = doc(collection(db, "users"), uid);
-     //        await setDoc(userRef, { email: email, name: name });
-     //        console.log("User added successfully!");
-     //      } catch (e) {
-     //        console.error("Error adding user: ", e);
-     //      }
-     // }
-
      return (
           <KeyboardAvoidingView
                style={styles.container}
@@ -126,17 +114,7 @@ export default function SignupScreen({ navigation }) {
                </View>
 
                <View style={styles.buttonSection}>
-                    {/* <Button 
-                         outline
-                         onPress={handleSignUp}
-                         style={styles.button}
-                         title="Sign up"
-                    />
-                    <Button 
-                         onPress={() => navigation.navigate('Login')}
-                         style={styles.button}
-                         title="You have your account already?"
-                    /> */}
+
                     <TouchableOpacity
                          onPress={handleSignUp}
                          style={styles.button}

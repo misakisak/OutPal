@@ -139,7 +139,6 @@ export default function NewLive({navigation}) {
     return (
         
         <SafeAreaView style={[{ flex: 1, backgroundColor: "white"}]}>
-            {/* <Text style={{margin:30}}>NewLive</Text> */}
             <SafeAreaView style={{padding: 10,flex: 1}}>
                 <View style={styles.buttonContainer}>
                     <View style={{width: '100%', margin: 5, alignItems: 'flex-start', flexDirection:'row'}}>
@@ -168,27 +167,17 @@ export default function NewLive({navigation}) {
                         containerStyle={{ height: '15%', margin: 4 }}
                     />
                     <TextInput style={styles.textInput} placeholder="Title" onChangeText={(text) => setTitle(text)} />
-
-                    {/* <TextInput style={styles.textInput} placeholder="Time" /> */}
-                    {/* <TextInput style={styles.textInput} placeholder="Password" /> */}
                     <TextInput style={styles.textInput} placeholder="link" value={link} onChangeText={(text) => setLink(text.replace(/\s/g, ''))}  />
                     <Text style={styles.paragraph}>Details</Text>
                     <TextInput style={styles.textInput2} multiline onChangeText={(text) => setDetail(text)}  />
                    
                 </View>
-                
-                
 
-                {/* <View style={{styles.button2}}> */}
                     <TouchableOpacity style={styles.button2} onPress={()=>createLive()}>
                         <Text>Create Live</Text>
                     </TouchableOpacity>
-                {/* </View> */}
 
                 <Text style={styles.paragraph2}>Your Live Schedule</Text>
-                {/* <Text style={styles.paragraph2}>{moment(date).format('YYYY/MM/DD HH:mm:ss')}</Text>
-                <Text>{JSON.stringify(date)}</Text> */}
-
 
                 <ScrollView style={{flex: 1, backgroundColor: "white", margin: 2}}>
                     <View style={styles.ScheduleContainer}>
@@ -205,17 +194,6 @@ export default function NewLive({navigation}) {
                     </View>
                 </ScrollView>
             </SafeAreaView>
-            {/* <View style={styles.container}>
-            {image && <Image source={{uri: image}} style={styles.image}/>}
-            </View> */}
-            {/* <View style={{flex:1}}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate("Live")}
-                    style={styles.button}
-                >
-                    <Text style={styles.text}>Go Live</Text>
-                </TouchableOpacity>
-            </View> */}
         </SafeAreaView>
     );
 }

@@ -23,15 +23,6 @@ const Stack = createStackNavigator();
 export class App extends Component {
 
   render() {    
-    // const { loggedIn, loaded } = this.state;
-    // if(!loaded){
-    //   return(
-    //     <View style={{ flex: 1, justifyContent: 'center'}}>
-    //       <Text>Every single have rights and power to change the world. It is up to you!!</Text>
-    //     </View>
-    //   )
-    // }
-
     return(
       <Provider store={store}>
         <NavigationContainer>
@@ -47,16 +38,6 @@ export class App extends Component {
                 headerTitleStyle: {fontWeight: 'bold'},
               }}
             />
-            {/* <Stack.Screen 
-              name="Home"  
-              component={HomeScreen} 
-              navigation={this.props.navigation} 
-              options={{
-                headerStyle: {backgroundColor: "#95E1D3"},
-                headerTintColor: "white",
-                headerTitleStyle: {fontWeight: 'bold'},
-              }}
-            /> */}
             <Stack.Screen 
               name="Signup" 
               component={SignupScreen} 
@@ -98,16 +79,6 @@ export class App extends Component {
                 headerTitleStyle: {fontWeight: 'bold'}
               }}
             />
-            {/* <Stack.Screen 
-              name="Profile" 
-              component={ProfileScreen}
-              navigation={this.props.navigation}
-              options={{
-                headerStyle: {backgroundColor: "white", borderWidth: 1, borderColor: "gray"},
-                headerTintColor: "black",
-                headerTitleStyle: {fontWeight: 'bold'}
-              }}
-            /> */}
             <Stack.Screen 
               name="Profile" 
               component={ProfileScreen}

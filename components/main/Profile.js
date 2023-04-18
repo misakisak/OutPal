@@ -1,9 +1,9 @@
 //this screen is for user to start new live peer tutoring
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, FlatList, Text, Linking, View, Button, Image, TouchableOpacity, SafeAreaView, ScrollView,  } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+import { StyleSheet, FlatList, Text, Linking, View, Image, TouchableOpacity, SafeAreaView, ScrollView,  } from 'react-native';
+import { useSelector } from 'react-redux';
+import { collection, getDoc, doc, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase'
 import Constants from 'expo-constants';
 import { useIsFocused } from '@react-navigation/native';
@@ -11,8 +11,6 @@ import { useIsFocused } from '@react-navigation/native';
 export default function ProfileScreen({navigation}) {
     const user = auth.currentUser
     const [ a, setA ] = useState(true)
-    const [i, setI] = useState(true)
-    const [copiedText, setCopiedText] = useState('');
     const [usersusers, setUsersusers] = useState({
         email: user.email,
         name: '',
@@ -21,29 +19,17 @@ export default function ProfileScreen({navigation}) {
     });
     const [userLiveList, setUserLiveList] = useState([])
     const [liveContentList, setLiveContentList] = useState([])
-
     const [userQuestionList, setUserQuestionList] = useState([])
     const [questionContentList, setQuestionContentList] = useState([])
-
-    const stateUsers = useSelector((state) => state.user);
     const isFocused = useIsFocused();
-
-    // const newItems2 = [];
     
     useEffect(() => {
         if (isFocused) {
-            // Your function here
             getUser()
             readLiveCollection()
             console.log('Profile Screen opened');
         } 
     },[isFocused]);
-
-    // useEffect(() => {
-    //     getUser()
-    //     readLiveCollection()
-    //     console.log('first time!');
-    // },[]);
 
     async function getUser() {
         try {
@@ -52,7 +38,7 @@ export default function ProfileScreen({navigation}) {
           if (userDoc.exists()) {
             setUsersusers({...usersusers, name: userDoc.data().name, bio: userDoc.data().bio, uid: userDoc.id, icon: userDoc.data().icon})
             console.log("User data:", userDoc.data());
-            readLiveCollection()//asdfsdfasdf
+            readLiveCollection()
             readQuestionCollection()
           } else {
             console.log("No such document!");
@@ -60,19 +46,6 @@ export default function ProfileScreen({navigation}) {
         } catch (e) {
           console.error("Error getting user: ", e);
         }
-    }
-
-    async function getUserQuestion () {
-        const qCollection = collection(db, "users", user.uid, 'question');
-        const qSnapshot = await getDocs(qCollection);
-        const idArray = qSnapshot.docs.map((doc) => doc.id);
-        const dataArray = qSnapshot.docs.map((doc) => doc.data());
-        const newItems = []; // Create a copy of the existing items array
-        for (let i = 0; i < idArray.length; i++) {
-            newItems.push({ TagID: dataArray[i].TagID, QID: dataArray[i].QID });
-        }
-        setUserQuestionList(newItems)
-        console.log(userQuestionList)
     }
 
     function video () {
@@ -85,36 +58,19 @@ export default function ProfileScreen({navigation}) {
         readQuestionCollection()
     }
 
-    // async function getUserLive() {
-    //     const qCollection = collection(db, "users", user.uid, 'live');
-    //     const qSnapshot = await getDocs(qCollection);
-    //     const idArray = qSnapshot.docs.map((doc) => doc.id);
-    //     const dataArray = qSnapshot.docs.map((doc) => doc.data());
-    //     const newItems = []; // Create a copy of the existing items array
-    //     for (let i = 0; i < idArray.length; i++) {
-    //         newItems.push({ TagID: dataArray[i].TagID, LiveID: dataArray[i].LiveID });
-    //     }
-    //     setUserLiveList(newItems)
-    //     console.log(userLiveList)
-    //     console.log(userLiveList[0])
-    // }
-
     const readQuestionCollection = async () => {
         const qCollection = collection(db, "users", user.uid, 'question');
         const qSnapshot = await getDocs(qCollection);
         const idArray = qSnapshot.docs.map((doc) => doc.id);
         const dataArray = qSnapshot.docs.map((doc) => doc.data());
-        const newItems = []; // Create a copy of the existing items array
+        const newItems = []; 
         for (let i = 0; i < idArray.length; i++) {
             newItems.push({ TagID: dataArray[i].TagID, QID: dataArray[i].QID });
         }
         setUserQuestionList(newItems)
         console.log('userQuestionList')
         console.log(userQuestionList)
-        // console.log(userLiveList[1].LiveID)
-        
-        // console.log(userLiveList.length)
-        // setLiveContentList([]);
+
         const newItems2 = [];
         for (let a = 0; a < userQuestionList.length; a++) {
             const qCollection = collection(db, "Q's", userQuestionList[a].TagID, "question");
@@ -122,19 +78,6 @@ export default function ProfileScreen({navigation}) {
             const idArray = qSnapshot.docs.map((doc) => doc.id);
             const dataArray = qSnapshot.docs.map((doc) => doc.data());
             for (let i = 0; i < idArray.length; i++) {
-                // newItems2.push({
-                //     uid: dataArray[i].uid,
-                //     name: dataArray[i].name,
-                //     tagID: dataArray[i].TagID,
-                //     tag: dataArray[i].tag,
-                //     title: dataArray[i].Title,
-                //     time: dataArray[i].Time,
-                //     detail: dataArray[i].Detail,
-                //     link: dataArray[i].Link,
-                //     icon: dataArray[i].icon,
-                //     uid: dataArray[i].uid,
-                //     LiveID: dataArray[i].LiveID
-                // })
                 newItems2.push({ 
                     question: dataArray[i]?.question || "", 
                     uid: dataArray[i].uid, 
@@ -149,7 +92,6 @@ export default function ProfileScreen({navigation}) {
                 console.log(dataArray[i])
             }
         }    
-        // setLiveContentList(...liveContentList, newItems2)
         console.log('questionContentList')
         setQuestionContentList(...questionContentList, newItems2)
         console.log(newItems2)
@@ -165,12 +107,7 @@ export default function ProfileScreen({navigation}) {
             newItems.push({ TagID: dataArray[i].TagID, LiveID: dataArray[i].LiveID });
         }
         setUserLiveList(newItems)
-        // console.log("userLiveList")
-        // console.log(userLiveList)
-        // console.log(userLiveList[1].LiveID)
-        
-        // console.log(userLiveList.length)
-        // setLiveContentList([]);
+
         const newItems2 = [];
         for (let a = 0; a < userLiveList.length; a++) {
             const qCollection = collection(db, "Q's", userLiveList[a].TagID, "live");
@@ -191,14 +128,10 @@ export default function ProfileScreen({navigation}) {
                     uid: dataArray[i].uid,
                     LiveID: dataArray[i].LiveID
                 })
-                // console.log("dataArray[i]")
-                // console.log(dataArray[i])
             }
         }    
-        // setLiveContentList(...liveContentList, newItems2)
         console.log('liveContentList')
         setLiveContentList(...liveContentList, newItems2)
-        // console.log(liveContentList)
     }; 
 
     const OpenURLButton = ({ url, children, style, style2, style3, style4}) => {
@@ -219,7 +152,6 @@ export default function ProfileScreen({navigation}) {
     return (
         <SafeAreaView style={[{ flex: 1, backgroundColor: "white", justifyContent: 'flex-start'}]}>
         <View style={styles.profile}>
-            {/* <Image source={{ uri: 'https://cdn.icon-icons.com/icons2/2248/PNG/512/face_icon_137648.png' }} style={{height: 60, width: 60}} /> */}
             <Image 
                 source={{ uri: usersusers.icon }} 
                 style={{ justifyContent: 'center' ,textAlign: 'center',flexGrow: 0.7,borderRadius: 100,height: 60, width: 60, marginHorizontal: 10}} 
@@ -290,7 +222,6 @@ export default function ProfileScreen({navigation}) {
             {a ? (
                 <FlatList
                     data={liveContentList}
-                    // style={styles.postContainer}
                     contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
                     renderItem={({item}) => 
                         <View style={{flexDirection: 'row', alignItems: 'center', width: '90%', backgroundColor: '#ECFFF9', margin:10, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: "#CAF1E4"}}>
@@ -335,7 +266,6 @@ export default function ProfileScreen({navigation}) {
                     }
                     keyExtractor={item => item.QID}
                 />
-                // <Text>Show this when variable is not equal to 1</Text>
             )}
         </View>
         </SafeAreaView>
@@ -354,7 +284,6 @@ const styles = StyleSheet.create({
         flex: 0.1,
         flexDirection: 'row',
         marginRight: 5
-        // backgroundColor: "blue"
     },
     setting:{
        flex: 1,
@@ -364,7 +293,6 @@ const styles = StyleSheet.create({
        marginLeft: 10,
        alignItems: 'center',
        justifyContent: 'center'
-
     },
      postContainer: {
          flex:6,

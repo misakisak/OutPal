@@ -1,62 +1,165 @@
-//this screen is for user to start new live peer tutoring
-
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity, SafeAreaView, ScrollView,  } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
-import { db, auth } from '../../firebase'
+import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, FlatList, Text, Linking, View, Image, TouchableOpacity, SafeAreaView, ScrollView,  } from 'react-native';
+import { useSelector } from 'react-redux';
+import { collection, getDoc, doc, getDocs } from "firebase/firestore";
+import { db } from '../../firebase'
 import Constants from 'expo-constants';
 import { useIsFocused } from '@react-navigation/native';
 
-
-export default function OtherProfileScreen({route,navigation}) {
+export default function OtherProfileScreen({route, navigation}) {
     const OtherUser = route.params.uid
-    console.log('other user')
-    console.log(OtherUser)
-
-    const [ a, setA ] = useState(true)
-    const [copiedText, setCopiedText] = useState('');
-
+     const [ a, setA ] = useState(true)
+//     const [i, setI] = useState(true)
+//     const [copiedText, setCopiedText] = useState('');
+//     const [otherOther, setOtherOther] = useState({
+//         email: '',
+//         name: '',
+//         uid: '',
+//         bio: '',
+//     });
     const [ otherOther, setOtherOther] = useState({
-        email: "",
-        name: "",
-        uid: route.params.uid,
-        bio: "",
-        icon: "",
-    });
+             email: "",
+             name: "",
+             uid: route.params.uid,
+             bio: "",
+             icon: "",
+         });
+    const [userLiveList, setUserLiveList] = useState([])
+    const [liveContentList, setLiveContentList] = useState([])
 
+    const [userQuestionList, setUserQuestionList] = useState([])
+    const [questionContentList, setQuestionContentList] = useState([])
+
+//     const stateUsers = useSelector((state) => state.user);
+    const isFocused = useIsFocused();
+
+    // const newItems2 = [];
+    
     useEffect(() => {
-          getUser()
-    },[]);
+        if (isFocused) {
+            getUser()
+            readLiveCollection()
+            console.log('Profile Screen opened');
+        } 
+    },[isFocused]);
 
     async function getUser() {
-        try {
-          const userRef = doc(collection(db, "users"), OtherUser);
-          const userDoc = await getDoc(userRef);  
-          if (userDoc.exists()) {
-            setOtherOther({...otherOther, name: userDoc.data().name, bio: userDoc.data().bio, icon: userDoc.data().icon})
-            console.log("User data:1!!!", userDoc.data());
-          } else {
-            console.log("No such document!");
-          }
-        } catch (e) {
-          console.error("Error getting user: ", e);
-        }
+             try {
+               const userRef = doc(collection(db, "users"), OtherUser);
+               const userDoc = await getDoc(userRef);  
+               if (userDoc.exists()) {
+                    setOtherOther({...otherOther, name: userDoc.data().name, bio: userDoc.data().bio, icon: userDoc.data().icon})
+                    console.log("User data:1!!!", userDoc.data());
+                    readLiveCollection()
+                    readQuestionCollection()
+               } else {
+                 console.log("No such document!");
+               }
+             } catch (e) {
+               console.error("Error getting user: ", e);
+             }
+         }
+
+    function video () {
+        setA(true)
+        readLiveCollection()
     }
 
-    const readCollection = async () => {
-        const qCollection = collection(db, "Q's");
+    function question () {
+        setA(false)
+        readQuestionCollection()
+    }
+
+    const readQuestionCollection = async () => {
+        const qCollection = collection(db, "users", otherOther.uid, 'question');
         const qSnapshot = await getDocs(qCollection);
         const idArray = qSnapshot.docs.map((doc) => doc.id);
         const dataArray = qSnapshot.docs.map((doc) => doc.data());
-        const newItems = items.slice(); // Create a copy of the existing items array
+        const newItems = [];
         for (let i = 0; i < idArray.length; i++) {
-          newItems.push({ label: dataArray[i].Tag, value: idArray[i] });
+            newItems.push({ TagID: dataArray[i].TagID, QID: dataArray[i].QID });
         }
-        setItems(newItems);
-        // console.log(items)
+        setUserQuestionList(newItems)
+        console.log('userQuestionList')
+        console.log(userQuestionList)
+
+        const newItems2 = [];
+        for (let a = 0; a < userQuestionList.length; a++) {
+            const qCollection = collection(db, "Q's", userQuestionList[a].TagID, "question");
+            const qSnapshot = await getDocs(qCollection);
+            const idArray = qSnapshot.docs.map((doc) => doc.id);
+            const dataArray = qSnapshot.docs.map((doc) => doc.data());
+            for (let i = 0; i < idArray.length; i++) {
+                newItems2.push({ 
+                    question: dataArray[i]?.question || "", 
+                    uid: dataArray[i].uid, 
+                    name: dataArray[i].name, 
+                    time: dataArray[i].time, 
+                    tag: dataArray[i].tag, 
+                    icon: dataArray[i].icon,
+                    TagID: userQuestionList[a].TagID, 
+                    QID: dataArray[i].QID
+                });
+                console.log("dataArray[i]")
+                console.log(dataArray[i])
+            }
+        }    
+        console.log('questionContentList')
+        setQuestionContentList(...questionContentList, newItems2)
+        console.log(newItems2)
     }; 
 
+    const readLiveCollection = async () => {
+        const qCollection = collection(db, "users", otherOther.uid, 'live');
+        const qSnapshot = await getDocs(qCollection);
+        const idArray = qSnapshot.docs.map((doc) => doc.id);
+        const dataArray = qSnapshot.docs.map((doc) => doc.data());
+        const newItems = [];
+        for (let i = 0; i < idArray.length; i++) {
+            newItems.push({ TagID: dataArray[i].TagID, LiveID: dataArray[i].LiveID });
+        }
+        setUserLiveList(newItems)
+        const newItems2 = [];
+        for (let a = 0; a < userLiveList.length; a++) {
+            const qCollection = collection(db, "Q's", userLiveList[a].TagID, "live");
+            const qSnapshot = await getDocs(qCollection);
+            const idArray = qSnapshot.docs.map((doc) => doc.id);
+            const dataArray = qSnapshot.docs.map((doc) => doc.data());
+            for (let i = 0; i < idArray.length; i++) {
+                newItems2.push({
+                    uid: dataArray[i].uid,
+                    name: dataArray[i].name,
+                    tagID: dataArray[i].TagID,
+                    tag: dataArray[i].tag,
+                    title: dataArray[i].Title,
+                    time: dataArray[i].Time,
+                    detail: dataArray[i].Detail,
+                    link: dataArray[i].Link,
+                    icon: dataArray[i].icon,
+                    uid: dataArray[i].uid,
+                    LiveID: dataArray[i].LiveID
+                })
+            }
+        }    
+        console.log('liveContentList')
+        setLiveContentList(...liveContentList, newItems2)
+    }; 
+
+    const OpenURLButton = ({ url, children, style, style2, style3, style4}) => {
+        const handlePress = useCallback(async () => {
+            const supported = await Linking.canOpenURL(url);
+            if (supported) {
+                await Linking.openURL(url);
+            } else {
+                Alert.alert(`Don't know how to open this URL: ${url}`);
+            }
+            }, [url]);
+    
+        return <View style={style4}>
+             <TouchableOpacity onPress={handlePress} style={[style, style2]} ><Text style={style3}>{children}</Text></TouchableOpacity>
+            </View>;
+      }; 
+    
     return (
         <SafeAreaView style={[{ flex: 1, backgroundColor: "white", justifyContent: 'flex-start'}]}>
         <View style={styles.profile}>
@@ -85,54 +188,90 @@ export default function OtherProfileScreen({route,navigation}) {
                 <Text style={{fontWeight: 'bold'}}>{otherOther.name}</Text>
             
             </View>
-            <TouchableOpacity style={styles.setting}  onPress={() => navigation.navigate("Edit", {data: usersusers})}>
+            <TouchableOpacity style={styles.setting} >
                 <Text style={{fontSize: 11}}>Follow</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.setting}>
-                <Text style={{fontSize: 11}}>Unfollow</Text>
-            </TouchableOpacity>
-            {/* <TouchableOpacity style={styles.setting} onPress={() => navigation.navigate("Setting")}>
-                <Text style={{fontSize: 11}}> Setting</Text>
-            </TouchableOpacity> */}
+             <TouchableOpacity style={styles.setting}>
+                 <Text style={{fontSize: 11}}>Unfollow</Text>
+             </TouchableOpacity>
             
         </View>
         <View style={{borderBottomWidth: 1,  flex: 0.4, borderBottomColor: 'lightgrey'}}>
             <View style={{marginHorizontal: 20}}>
-                <Text style={{fontSize: 11, color: 'gray'}}>User ID:</Text>
-                <Text style={{fontSize: 11 , color: 'gray'}} selectable={true}>{otherOther.uid}</Text>
             </View>
             <ScrollView style={styles.commentContainer}>
                 <Text>{otherOther.bio}</Text>
             </ScrollView>
         </View>
         <View style={{flex:2.5}}>
-            <View style={{flexDirection: 'row', justifyContent: 'space-evenly', borderBottomWidth: 1, borderBottomColor: 'lightgrey'}}>
-                <TouchableOpacity style={{margin: 4}} onPress={() => setA(true)}>
-                    <Text>Video</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{margin: 4}} onPress={() => setA(false)}>
-                    <Text>Questions</Text>
-                </TouchableOpacity>
-            </View>
+            {a? (
+                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', borderBottomWidth: 1, borderBottomColor: 'lightgrey'}}>
+                    <TouchableOpacity style={{margin: 4, backgroundColor: '#F2CAFF', borderRadius: 10}} onPress={() => video()}>
+                        <Text>Video</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{margin: 4, borderRadius: 10}} onPress={() => question()}>
+                        <Text>Questions</Text>
+                    </TouchableOpacity>
+                 </View>
+
+            ):(
+                <View style={{flexDirection: 'row', justifyContent: 'space-evenly', borderBottomWidth: 1, borderBottomColor: 'lightgrey'}}>
+                    <TouchableOpacity style={{margin: 4,  borderRadius: 10}} onPress={() => video()}>
+                        <Text>Video</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{margin: 4,backgroundColor: '#F2CAFF',  borderRadius: 10}} onPress={() => question()}>
+                        <Text>Questions</Text>
+                    </TouchableOpacity>
+                 </View>
+            )}
+            
             {a ? (
-                <ScrollView>
-                <View style={styles.postContainer}>
-                    <View style={styles.post}>
-                        <Text style={{margin: 9}}>数学的帰納法、授業だけで理解できましたか？</Text>
-                    </View>
-                    <View style={styles.post}>
-                        <Text style={{margin: 9}}>積和の公式の覚え方をわかりやすく説明します</Text>
-                    </View>
-                    <View style={styles.post}>
-                        <Text style={{margin: 9}}>√２が無理数であることの証明、皆さんできますか？</Text>
-                    </View>
-                </View>
-                </ScrollView>
+                <FlatList
+                    data={liveContentList}
+                    contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
+                    renderItem={({item}) => 
+                        <View style={{flexDirection: 'row', alignItems: 'center', width: '90%', backgroundColor: '#ECFFF9', margin:10, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: "#CAF1E4"}}>
+                        <View style={{flexDirection: 'column', flex: 6}}>
+                            <TouchableOpacity style={{fledDirection: 'column'}} onPress={() => navigation.navigate("Other Profile", {uid: item.uid})}>
+                                <Image source={{ uri: item.icon }} style={{borderRadius: 100,height: 60, width: 80, margin: 3}} />
+                                <Text style={styles.title}>{item.name}</Text>
+                            </TouchableOpacity>
+                            <Text style={{fontSize: 15, padding: 4}}>Title: {item.title}</Text>
+                            <Text style={{fontSize: 13, padding: 4}}>Date: {item.time}</Text>
+                            <Text style={{fontSize: 13, padding: 4}}>#{item.tag}</Text>
+                            <Text style={{fontSize: 13, padding: 5}}>{item.link}</Text>
+                            <Text style={{fontSize: 13, padding: 4}}>Detail: {item.detail}</Text>
+                            <View styles={ styles.buttonContainer}>
+                                <OpenURLButton url={item.link} style={styles.buttonOutline3} style2={styles.setting} style3={styles.buttonText3} style4={styles.button33} > 
+                                    Link to the meet!
+                                </OpenURLButton>
+                                <TouchableOpacity style={{alignItems: 'center', margin: 2}} onPress={() => navigation.navigate("Copy", {link: item.link})}>
+                                    <Text>Copy Link</Text>
+                                </TouchableOpacity>
+                             </View>
+                        </View>
+                        </View>
+                    }
+                    keyExtractor={item => item.LiveID}
+                />      
             ) : (
-               <View>
-                <Text>Show this when variable is not equal to 1</Text>
-                {/* <Text>{route.params.data}</Text> */}
-               </View>
+                <FlatList
+                    data={questionContentList}
+                    renderItem={({item}) => 
+                        <View style={{margin: 4, borderWidth: 1, borderRadius: 4, borderColor: 'gray',}}>
+                            <TouchableOpacity onPress={() => navigation.navigate("Other Profile", {uid: item.uid})}>
+                                <Image source={{ uri: item.icon }} style={{borderRadius: 100,height: 60, width: 80, margin: 3}} />
+                                <Text style={{padding: 5, fontSize: 18}}>{item.name}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => navigation.navigate("QComment", {question: item})}>
+                            <Text style={{padding: 5, fontSize: 15}}>{item.question}</Text>
+                            <Text style={{padding: 5, fontSize: 15}}>{item.time}</Text>
+                            <Text style={{padding: 5, fontSize: 15}}>{item.tag}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    }
+                    keyExtractor={item => item.QID}
+                />
             )}
         </View>
         </SafeAreaView>
@@ -151,7 +290,6 @@ const styles = StyleSheet.create({
         flex: 0.1,
         flexDirection: 'row',
         marginRight: 5
-        // backgroundColor: "blue"
     },
     setting:{
        flex: 1,
@@ -189,6 +327,5 @@ const styles = StyleSheet.create({
         flex: 0.4,
         textAlign: 'left',
         marginHorizontal: 20,
-        // backgroundColor: "green"
     },
 });

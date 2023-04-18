@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, SafeAreaView, TextInput, FlatList, Alert, ScrollView, VirtualizedList} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TextInput, VirtualizedList} from 'react-native';
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
-import { collection, getDoc, setDoc, addDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, getDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase'
 
 
@@ -33,6 +33,7 @@ export default function AIScreen() {
         },
       }).then((res) => res.json());
       const newAIDataItem = { id: uuidv4(), who1: 'user', ask: question,  who2: 'AI', text: response.choices[0].text, time: Date() };
+      console.log(question)
       setAnswer([...answer, newAIDataItem]);
       setQuestion("");
     } catch (e) {
@@ -42,8 +43,9 @@ export default function AIScreen() {
 
   async function getAPI() {
     try {
-      const userRef = doc(collection(db, "API"), "openAPI");
+      const userRef = doc(collection(db, "API"), "IyATsGrGPjuQoV5kWb0g");
       const userDoc = await getDoc(userRef);
+      console.log(userDoc.data().api)
       if (userDoc.exists()) {
         setAPI("Bearer " + userDoc.data().api)
         // console.log(api)

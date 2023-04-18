@@ -1,24 +1,18 @@
 //this screen is for user to start new live peer tutoring
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TextInput, Text, View, Button, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, TextInput, Text, View, TouchableOpacity, SafeAreaView } from 'react-native';
 import DropDownPicker from "react-native-dropdown-picker";
 import { db, auth } from '../../firebase'
-import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs, where, query } from "firebase/firestore";
-import firebase from 'firebase/app';
+import { collection, getDoc, doc, getDocs, where, query } from "firebase/firestore";
 import 'firebase/database';
 import { FlatList } from 'react-native-gesture-handler';
-
-
 
 export default function SearchScreen({navigation}) {
     const user = auth.currentUser;
     const [open, setOpen] = useState(false);
-    // const [value, setValue] = useState(null);
     const [value, setValue] = useState("null");
 
-    // const [value, setValue] = useState("v8F1N37ud3vnUQ2KsCE3")
-    // const [items, setItems] = useState([])
     const [items, setItems] = useState([
         {label: "search with user id", value: "uid"},
         {label: "search question", value: "question"},
@@ -29,20 +23,20 @@ export default function SearchScreen({navigation}) {
 
     const [text, setText] = useState('')
 
-    const [searchUser, setSearchUser] = useState([])
+    // const [searchUser, setSearchUser] = useState([])
 
     const [Qresult, setQresult] = useState()
 
-    useEffect(() => {
-        // readCollection()
-    },[]);
+    // useEffect(() => {
+    //     // readCollection()
+    // },[]);
 
     const readCollection = async () => {
         const qCollection = collection(db, "Q's");
         const qSnapshot = await getDocs(qCollection);
         const idArray = qSnapshot.docs.map((doc) => doc.id);
         const dataArray = qSnapshot.docs.map((doc) => doc.data());
-        const newItems = []; // Create a copy of the existing items array
+        const newItems = [];
         for (let i = 0; i < idArray.length; i++) {
           newItems.push({ label: dataArray[i].Tag, value: idArray[i] });
         }
@@ -55,9 +49,7 @@ export default function SearchScreen({navigation}) {
             const userDoc = await getDoc(userRef);  
             if (userDoc.exists()) {
               console.log("User data:", userDoc.data());
-            //   navigation.navigate("Other Profile", {data: userDoc.data(), uid: text})
               navigation.navigate("Other Profile", {uid: text})
-
             } else {
               console.log("No such document!");
             }
@@ -69,8 +61,6 @@ export default function SearchScreen({navigation}) {
     async function searchQuestion(text) {
         const newItems = [];
         readCollection()
-        // console.log("tag tag tag tag tag tag tag tag tag")
-        // console.log(tags[0])
         for (let j = 0; j < tags.length; j++) {
             const q = query(collection(db, "Q's", tags[j].value, "question"), where('question', '>=', text));
             const querySnapshot = await getDocs(q);
@@ -137,7 +127,7 @@ export default function SearchScreen({navigation}) {
                     />
                 ) : (
                     <View>
-                    <Text>Show this when variable is not equal to 1</Text>
+                    {/* <Text>Show this when variable is not equal to 1</Text> */}
                     </View>
                 )}
 

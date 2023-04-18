@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Keyboard,TouchableWithoutFeedback, KeyboardAvoidingView, StyleSheet, TextInput, Text, View, Button, Image, TouchableOpacity } from 'react-native';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { configureStore } from '@reduxjs/toolkit';
-import { Provider } from 'react-redux';
-import { useDispatch, useSelector } from 'react-redux';
-import { append, update } from '../../redux/userSlice';
-// import { auth } from '../../firebase'
-import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+import { KeyboardAvoidingView, StyleSheet, TextInput, Text, View, Image, TouchableOpacity } from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
+import { append } from '../../redux/userSlice';
+import { collection, getDoc, doc } from "firebase/firestore";
 import { db, auth } from '../../firebase'
 
 export default function LoginScreen({ navigation }) {
@@ -50,12 +47,9 @@ export default function LoginScreen({ navigation }) {
      }
 
      async function getName(uid) {
-          // const userRef = doc(collection(db, "users"), uid);
-          // const stateUsers = useSelector((state) => state.user)[1];
           const qCollection = doc(db, "users", uid);
           const qSnapshot =  await getDoc(qCollection);
           if (qSnapshot.exists()) {
-               // const idArray = qSnapshot.docs.map((doc) => doc.id);
                const dataArray = qSnapshot.map((doc) => doc.data());
                console.log('dataArray')
                console.log(dataArray)
@@ -70,29 +64,17 @@ export default function LoginScreen({ navigation }) {
                dispatch(append({
                     email: userCredentials.user.email, 
                     uid: userCredentials.user.uid,
-                    // name: usersusers.name
                }));
-               // getName(userCredentials.user.uid)
-               // const newItems = { uid: dataArray[i].comment, name: dataArray[i].name, time: dataArray[i].time}
-               // setUsersusers({...usersusers, uid:userCredentials.user.uid })
-
                console.log('Logged in with:', usersusers);
           })
-
-          // .then(
-          //      getName()
-          // )
           .catch(error => console.log(error))
           
      }
 
      return (
-          // <Provider store={store}>
           <View
                style={styles.container}
-               // behavior="padding"
           >
-               
                <Text style={styles.tittle}>
                     OUTPAL
                 </Text>
@@ -144,13 +126,6 @@ export default function LoginScreen({ navigation }) {
                     >
                          <Text style={styles.buttonText}>You haven't sign up yet?</Text>
                     </TouchableOpacity>
-
-                    {/* <Button 
-                         outline
-                         onPress={() => navigation.navigate("Signup")}
-                         style={styles.button}
-                         title="You haven't sign up yet?"
-                    /> */}
                </View>
                <View style={{flex:0.5}}></View>
           </View>

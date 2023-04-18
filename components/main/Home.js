@@ -1,33 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, Linking,SafeAreaView, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { append, update } from '../../redux/userSlice';
-// import { collection, getDoc, setDoc, addDoc, doc, updateDoc } from "firebase/firestore";
+import { StyleSheet, Text, View, Linking,SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { useSelector } from 'react-redux';
 import { db, auth } from '../../firebase'
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
 import { Ionicons } from '@expo/vector-icons'; 
 import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
 import { useIsFocused } from '@react-navigation/native';
 import { FlatList } from 'react-native-gesture-handler';
-import { list } from 'firebase/storage';
-import moment from 'moment';
 
-
-export default function HomeScreen({route, navigation}) {  
+export default function HomeScreen({ navigation }) {  
   const [isLoading, setIsLoading] = useState(false);
-
   const user = auth.currentUser;
   const [items, setItems] = useState([])
   const isFocused = useIsFocused();
-
   const [tagValue, setTagValue] = useState(null)
   const [ i, setI ] = useState(true)
-
   const [listLive, setListLive] = useState([])
   const stateUsers = useSelector((state) => state.user);
-
   const [newlive, setNewlive] = useState([{
     uid: user.uid,
     name: '',
@@ -82,10 +72,8 @@ export default function HomeScreen({route, navigation}) {
     });
   }
 
-
   useEffect(() => {
     if (isFocused) {
-      // setI(true)
       setIsLoading(true);
       if (i){
         readCollection()
@@ -149,11 +137,6 @@ export default function HomeScreen({route, navigation}) {
       const qSnapshot = await getDocs(qCollection);
       const idArray = qSnapshot.docs.map((doc) => doc.id);
       const dataArray = qSnapshot.docs.map((doc) => doc.data());
-
-      const Collection = collection(db, "Q's", value, "question");
-      const Snapshot = await getDocs(Collection);
-      const IDArray = Snapshot.docs.map((doc) => doc.id);
-
       for (let i = 0; i < idArray.length; i++) {
         newItems.push({uid: dataArray[i].uid,
           name: dataArray[i].name,
@@ -167,31 +150,11 @@ export default function HomeScreen({route, navigation}) {
           uid: dataArray[i].uid,
           LiveID: dataArray[i].LiveID
         })
-       
-        // setListLive(...listLive, {name: dataArray[i].name,
-        //   tagID: dataArray[i].TagID,
-        //   tag: dataArray[i].tag,
-        //   title: dataArray[i].Title,
-        //   time: dataArray[i].Time,
-        //   detail: dataArray[i].Detail,
-        //   link: dataArray[i].Link,
-        // })
       }
-      // setQuestionslist(newItems);
-    
-    // setQuestionslist(newItems);
-    
-    setListLive(...listLive, newItems)
-    // console.log('newItems')
-    // console.log(newItems)
+    setListLive(...listLive, newItems.sort())
     console.log('!!!!!!!!')
     console.log(listLive.icon)
   }
-
-  // function myFunction(a) {
-  //   setTagValue(a);
-  //   setList();
-  // }
 
   const OpenURLButton = ({ url, children, style, style2, style3, style4}) => {
     const handlePress = useCallback(async () => {
@@ -221,24 +184,15 @@ export default function HomeScreen({route, navigation}) {
           </TouchableOpacity>
           <TouchableOpacity 
               style={{margin: 7, alignSelf: 'flex-end'}}
-              // onPress={()=> setState(false)}
           >
             <Feather name="bell" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity 
               style={{margin: 7, alignSelf: 'flex-end'}}
               onPress={() => navigation.navigate("Profile")}
-              // onPress={()=> setState(false)}
           >
             <Ionicons name="person-circle-outline" size={24} color="black" />
           </TouchableOpacity>
-          {/* <TouchableOpacity 
-              style={{margin: 7, alignSelf: 'flex-end'}}
-              onPress={setAllList}
-              // onPress={()=> setState(false)}
-          >
-            <Ionicons name="person-circle-outline" size={24} color="black" />
-          </TouchableOpacity> */}
         </View>
       </View>
 
@@ -279,8 +233,6 @@ export default function HomeScreen({route, navigation}) {
               <View style={{flexDirection: 'column', flex: 6}}>
                 <TouchableOpacity style={{fledDirection: 'column'}} onPress={() => navigation.navigate("Other Profile", {uid: item.uid})}>
                   <Image source={{ uri: item.icon }} style={{borderRadius: 100,height: 60, width: 80, margin: 3}} />
-                  {/* <Text>{item.tagID}</Text>
-                  <Text>{item.LiveID}</Text> */}
                   <Text style={styles.title}>{item.name}</Text>
                 </TouchableOpacity>
                 <Text style={{fontSize: 15, padding: 4}}>Title: {item.title}</Text>
@@ -288,31 +240,18 @@ export default function HomeScreen({route, navigation}) {
                 <Text style={{fontSize: 13, padding: 4}}>#{item.tag}</Text>
                 {/* <Text style={{fontSize: 13, padding: 5}}>{item.link}</Text> */}
                 <Text style={{fontSize: 13, padding: 4}}>Detail: {item.detail}</Text>
-                {/* <View styles={ styles.buttonContainer}> */}
-                    {/* <Text>Learn more about Edupops</Text> */}
                     <OpenURLButton url={item.link} style={styles.buttonOutline3} style2={styles.setting} style3={styles.buttonText3} style4={styles.button33} > 
                         Link to the meet!
                     </OpenURLButton>
                     <TouchableOpacity style={{alignItems: 'center', margin: 2}} onPress={() => navigation.navigate("Copy", {link: item.link})}>
                       <Text>Copy Link</Text>
                     </TouchableOpacity>
-                    {/* <OpenURLButton url={'https://twitter.com/edu_pops'} style={styles.buttonOutline3} style2={styles.button3} style3={styles.buttonText3} > 
-                        Twitter: @edu_pops
-                    </OpenURLButton> */}
-              {/* </View> */}
               </View>
             </View>
           }
           keyExtractor={item => item.LiveID}
         />
       )}
-        {/* <FlatList
-            data={newItems}
-            renderItem={ ({ item }) => (
-              <Text>{item.tagID}</Text>
-            )}
-            keyExtractor={item => item.id}
-        /> */}
     </SafeAreaView>
   )
 }
@@ -322,7 +261,6 @@ const styles = StyleSheet.create({
     height: '100%',
     flex: 1,
     alignItems: 'center',
-    // justifyContent: 'flex-start',
     padding: 4,
     backgroundColor: "white",
     flexDirection: "column"

@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {  TouchableWithoutFeedback,Keyboard, KeyboardAvoidingView,StyleSheet, Text, View, Button, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
+import { KeyboardAvoidingView,StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { append, update } from '../../redux/userSlice';
-import { signOut, updateProfile } from 'firebase/auth';
-import { collection, getDoc, setDoc, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+import { collection, getDoc, setDoc, doc, getDocs } from "firebase/firestore";
 import { db, auth } from '../../firebase'
 import DropDownPicker from "react-native-dropdown-picker";
 
 
-export default function NewQuestionScreen({route, navigation}) {  
+export default function NewQuestionScreen() {  
      const user = auth.currentUser;
 
      const [usersusers, setUsersusers] = useState({
@@ -17,7 +15,6 @@ export default function NewQuestionScreen({route, navigation}) {
      });
 
      const [text, setText] = useState("")
-     // console.log(text)
 
      const [questions, setQuestions] = useState({
           question: '',
@@ -31,11 +28,8 @@ export default function NewQuestionScreen({route, navigation}) {
      const [open, setOpen] = useState(false);
      const [value, setValue] = useState(null);
      const [items, setItems] = useState([
-     //   { label: "Calculus", value: "CeEpS6jdplOJkeyiJ2u4" },
      ]);
      
-     const dispatch = useDispatch();
-
      const stateUsers = useSelector((state) => state.user);
      
 
@@ -55,7 +49,6 @@ export default function NewQuestionScreen({route, navigation}) {
           }
           readCollection()
      }, [])
-     // }, [stateUsers]);
 
      async function getUser(uid) {
           try {
@@ -73,21 +66,7 @@ export default function NewQuestionScreen({route, navigation}) {
      }
 
      useEffect( () => {
-          // if (!user.email) {
-          //      return;
-          // }
-          // if (!stateUsers) {
-          //      return;
-          // }
-          const foundUser = stateUsers.filter(
-               ({email}) => email == user.email
-          );
-          // if (foundUser.length > 0) {
-               // setUsersusers(foundUser[0]);
-               // setQuestions({...questions, name: stateUsers[0].name});
                setTagTag()
-               // console.log(questions.uid)
-          // }
           console.log(questions)
      }, [value]);
      
@@ -96,7 +75,6 @@ export default function NewQuestionScreen({route, navigation}) {
      const setTagTag = async() => {
           const result = items.find((item) => item.value === value);
          console.log(result.label)
-          // setQuestions({...questions, tag: result.label});
           return result.label
      }
 
@@ -111,15 +89,11 @@ export default function NewQuestionScreen({route, navigation}) {
                newItems.push({ label: dataArray[i].Tag, value: idArray[i] });
           }
           setItems(newItems);
-          // console.log(items)
      };
 
      async function sendQuestion() {
           try {
                const userRef = doc(collection(db, "Q's", value, "question"))
-               // console.log(questions)
-               // await setDoc(userRef, { uid: questions.uid || "", name: questions.name, question: questions.question, time: questions.time, tag: questions.tag });
-               // setQuestions({...questions, question: text, tag:await setTagTag()});
                await setDoc(userRef, { uid: questions.uid, name: usersusers.name, question: text, tag: await setTagTag(), time: Date(), icon: usersusers.icon, TagID: value, QID: userRef.id});
                const userRef1 = doc(collection(db, "users", user.uid, "question"))
                await setDoc(userRef1, { TagID: value, QID: userRef.id});
@@ -136,7 +110,6 @@ export default function NewQuestionScreen({route, navigation}) {
      return (
           
           <SafeAreaView style={styles.container}>
-          
                <View style={{flex:1}}>
                     <DropDownPicker
                          open={open}
@@ -148,11 +121,10 @@ export default function NewQuestionScreen({route, navigation}) {
                          style={{margin:5, width: "95%"}}
                     />
                </View>
-               {/* <View style={{flex:5}}> */}
                <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={{width: '100%', 
-                    flex: 1, 
+                    flex: 0.5, 
                     alignItems: 'center',
                     justifyContent: 'flex-start',
                     padding: 4,
@@ -231,10 +203,6 @@ const styles = StyleSheet.create({
           alignItems: 'flex-start',
           justifyContent: 'flex-start',
      },
-     // button: {
-     //      width: '50%',
-     //      margin: 8,
-     // },
      button: {
           marginTop: "auto",
           backgroundColor: "#10a37f",
